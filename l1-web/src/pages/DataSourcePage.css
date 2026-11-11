@@ -1,0 +1,30 @@
+/* Data-source registry page layout and interaction refinements. */
+.data-page {
+  min-width: 0;
+}
+
+.data-page .ant-table-wrapper {
+  overflow: hidden;
+}
+
+.data-page .ant-table-cell {
+  white-space: nowrap;
+}
+
+.data-page .ant-table-cell .ant-space {
+  max-width: 100%;
+}
+
+.data-page .page-heading .ant-btn {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 700px) {
+  .data-page .page-heading .ant-btn {
+    width: 100%;
+  }
+
+  .data-page .ant-table-cell {
+    white-space: normal;
+  }
+}

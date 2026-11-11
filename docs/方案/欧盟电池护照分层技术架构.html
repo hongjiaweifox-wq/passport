@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="涂鸦欧盟电池护照平台技术方案初稿，聚焦分层架构和核心数据流。">
+  <title>欧盟电池护照｜分层技术架构方案</title>
+  <style>
+    :root{color-scheme:light;--ink:#183143;--muted:#63798a;--line:#dce7ec;--paper:#fff;--canvas:#f3f7f9;--brand:#087f8c;--brand-dark:#075a66;--soft:#e9f6f5;--blue:#eef4fc;--amber:#fff5e7;--green:#eaf7f0;--shadow:0 12px 36px rgba(24,49,67,.07);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);line-height:1.65}a{color:var(--brand-dark);text-underline-offset:3px}.hero{padding:48px max(22px,calc((100vw - 1120px)/2));background:linear-gradient(120deg,#15394a,#087f8c 72%,#17a08f);color:#fff}.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:700}h1{font-size:clamp(30px,4vw,44px);line-height:1.17;margin:12px 0}.hero p{max-width:780px;color:#e4f3f2;margin:0}.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.chip{padding:4px 10px;border:1px solid #ffffff50;border-radius:99px;background:#ffffff13;font-size:12px}.wrap{max-width:1120px;margin:26px auto 64px;padding:0 20px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:clamp(20px,3vw,30px);margin:16px 0;box-shadow:var(--shadow)}h2{font-size:23px;line-height:1.3;margin:0 0 15px}h3{font-size:16px;margin:18px 0 7px}p{margin:7px 0 12px}.lead{font-size:16px;color:#385366}.callout{border-left:4px solid var(--brand);background:var(--soft);padding:12px 15px;border-radius:0 9px 9px 0;margin:15px 0}.callout.warn{border-color:#dba043;background:var(--amber)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{border:1px solid var(--line);background:#fbfdfe;border-radius:11px;padding:15px}.card h3{margin:0 0 6px}.card p{margin:0;color:var(--muted);font-size:14px}.architecture{display:grid;gap:9px;margin:18px 0}.layer{display:grid;grid-template-columns:180px minmax(0,1fr);gap:15px;align-items:center;padding:15px 17px;border:1px solid #cfe1e6;border-radius:10px;background:#fbfefe}.layer:nth-child(odd){background:#f3f9fa}.layer-name{font-weight:750;color:var(--brand-dark)}.layer p{margin:0;font-size:14px;color:#425d6d}.layer small{display:block;color:var(--muted);margin-top:3px}.down{text-align:center;color:var(--brand);font-size:20px;line-height:1;margin:-5px 0}.tag{display:inline-block;border-radius:99px;padding:2px 8px;background:var(--blue);font-size:11px;font-weight:700;color:#385a7c;white-space:nowrap}.tag.green{background:var(--green);color:#176b4a}.tag.amber{background:var(--amber);color:#90520c}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;margin:12px 0}table{border-collapse:collapse;width:100%;min-width:620px;font-size:13px}th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}th{background:#f2f7f9;color:#365163}tr:last-child td{border-bottom:0}ul{padding-left:21px}li{margin:5px 0}.flow{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:9px;margin:16px 0}.step{background:#f1f9f8;border:1px solid #cfe5e1;border-radius:10px;padding:12px;font-size:13px}.step b{display:block;color:var(--brand-dark);margin-bottom:4px}.muted{color:var(--muted);font-size:13px}.footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 20px 30px}@media(max-width:760px){.layer{grid-template-columns:1fr;gap:5px}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}@media(max-width:480px){.flow{grid-template-columns:1fr}.wrap{padding:0 12px}.panel{padding:18px}}@media print{body{background:#fff}.hero{padding:25px;print-color-adjust:exact}.wrap{margin:10px auto}.panel{box-shadow:none;break-inside:avoid}a{color:inherit}}
+  </style>
+</head>
+<body>
+<header class="hero">
+  <div class="eyebrow">Tuya · Battery Passport Platform · Architecture Draft 0.2</div>
+  <h1>欧盟电池护照<br>分层技术架构方案</h1>
+  <p>基于需求梳理，定义平台能力分层和核心数据流，并链接各层开发级技术方案。本稿聚焦“数据从哪里来、如何结构化、如何形成护照并安全提供访问”。</p>
+  <div class="chips"><span class="chip">方案阶段：分层技术设计</span><span class="chip">产品对象：阳台光伏一体机 / 户用储能中的电池</span><span class="chip">版本：Draft 0.2</span></div>
+</header>
+<main class="wrap">
+  <section class="panel">
+    <h2>01 · 架构目标</h2>
+    <p class="lead">建设一套可汇聚多来源电池数据、形成规范化护照档案，并通过稳定标识和分级授权对外提供信息的平台能力。</p>
+    <div class="grid">
+      <div class="card"><h3>统一汇聚</h3><p>接收企业填报、文件导入、现有业务系统和设备运行侧数据。</p></div>
+      <div class="card"><h3>规范治理</h3><p>将来源各异的数据转换为统一、可校验、可追溯的电池护照结构。</p></div>
+      <div class="card"><h3>可信发布</h3><p>经过校验与责任主体审核后发布护照，并支持持续更新和历史追溯。</p></div>
+      <div class="card"><h3>安全访问</h3><p>通过电池唯一标识和二维码提供入口，按公开或授权范围展示数据。</p></div>
+    </div>
+    <div class="callout"><strong>核心设计原则：</strong>护照属于电池对象；电池 SN 可作为标识候选，但需要确保唯一、稳定并能映射至护照。护照建档和发布不依赖终端设备先激活连云。</div>
+  </section>
+
+  <section class="panel">
+    <h2>02 · 总体分层架构</h2>
+    <p>建议先按六层理解。数据自下而上汇入和治理，应用访问自上而下经过统一入口与权限控制。</p>
+    <div class="architecture">
+      <div class="layer"><div class="layer-name">L6 · 应用与访问层</div><p><strong>对外护照页、二维码扫码访问、企业管理工作台、授权数据查询、护照导出与开放 API。</strong><small>面向消费者、品牌/制造商、维修回收伙伴及有权监管角色提供相应视图。<a href="L6-应用与访问层技术方案.html">查看 L6 技术方案 →</a></small></p></div>
+      <div class="down">↑</div>
+      <div class="layer"><div class="layer-name">L5 · 护照服务层</div><p><strong>护照生成、唯一标识解析、版本管理、发布/撤回、生命周期事件关联。</strong><small>把通过审核的结构化数据组织为某一电池型号或单体电池的当前护照视图。<a href="L5-护照服务层技术方案.html">查看 L5 技术方案 →</a></small></p></div>
+      <div class="down">↑</div>
+      <div class="layer"><div class="layer-name">L4 · 数据治理与合规层</div><p><strong>数据映射、标准化、完整性校验、规则判定、质量状态、审核工作流、字段访问分类。</strong><small>将“收集到的数据”转成“可用于护照发布的数据”，记录来源、责任人和审核状态。<a href="L4-数据治理与合规层技术方案.html">查看 L4 技术方案 →</a></small></p></div>
+      <div class="down">↑</div>
+      <div class="layer"><div class="layer-name">L3 · 结构化数据层</div><p><strong>统一的电池护照数据模型与主数据档案。</strong><small>按电池型号、批次、单体电池、设备关联、生命周期事件组织，保留字段版本与数据血缘。<a href="L3-结构化数据层技术方案.html">查看 L3 技术方案 →</a></small></p></div>
+      <div class="down">↑</div>
+      <div class="layer"><div class="layer-name">L2 · 数据接入与导入层</div><p><strong>数据采集入口：模板/文件导入、人工填报、业务系统接口、设备云/BMS 接入。</strong><small>负责接收、初步解析、格式识别、导入任务状态和失败反馈，不在此层直接对外发布。<a href="L2-数据接入与导入层技术方案.html">查看 L2 技术方案 →</a></small></p></div>
+      <div class="down">↑</div>
+      <div class="layer"><div class="layer-name">L1 · 数据源层</div><p><strong>数据生产方与现有数据所在系统。</strong><small>电池制造商/供应链、品牌与产品管理系统、测试/合规资料、涂鸦设备云和后续服务/回收伙伴。<a href="L1-数据源与接入规范.html">查看 L1 技术方案 →</a></small></p></div>
+    </div>
+    <div class="callout warn"><strong>横向支撑能力（贯穿各层）：</strong>组织与身份、角色权限、审计日志、隐私与安全、配置和规则版本、运维监控、数据备份与迁移。它们不是单独的数据流步骤，而是各层共同遵循的基础能力。</div>
+    <div class="callout"><strong>数据库设计总览：</strong>查看 <a href="数据库表ER关系架构.html">数据库表 ER 关系架构 →</a>，集中对照当前 H2 原型与 L1–L5 目标 MySQL 表、键及跨层关系。</div>
+  </section>
+
+  <section class="panel">
+    <h2>分层技术方案索引</h2>
+    <p>架构总览与各层详细设计配套阅读。六份方案按同一技术基线编写：Java 17 / Spring Boot 3 / MySQL 8 / Redis / RocketMQ；应用层采用 React 18 + TypeScript + Ant Design 5。技术选型是当前方案基线，正式开发前可根据组织标准校准。</p>
+    <div class="grid">
+      <div class="card"><h3><a href="L1-数据源与接入规范.html">L1 · 数据源与接入规范</a></h3><p>数据责任、数据来源清单、CSV/JSON 模板、标识及数据质量约定。</p></div>
+      <div class="card"><h3><a href="L2-数据接入与导入层技术方案.html">L2 · 数据接入与导入层</a></h3><p>文件/API 导入、异步任务、解析、幂等、行级错误和安全扫描。</p></div>
+      <div class="card"><h3><a href="L3-结构化数据层技术方案.html">L3 · 结构化数据层</a></h3><p>电池型号、修订、批次、单体、设备关系及生命周期数据模型。</p></div>
+      <div class="card"><h3><a href="L4-数据治理与合规层技术方案.html">L4 · 数据治理与合规层</a></h3><p>字段字典、适用性规则、质量校验、审核及发布门禁。</p></div>
+      <div class="card"><h3><a href="L5-护照服务层技术方案.html">L5 · 护照服务层</a></h3><p>护照标识与版本、发布状态机、二维码解析、公开投影和受控访问。</p></div>
+      <div class="card"><h3><a href="L6-应用与访问层技术方案.html">L6 · 应用与访问层</a></h3><p>管理工作台、扫码 H5、OIDC 登录、权限映射、国际化与测试。</p></div>
+    </div>
+    <div class="callout"><strong>共同约定：</strong>基础包 com.tuya.passport；REST /api/v1；schema dpp-schema/1.0；数据以 org_id 隔离；平台主键、外部标识与 QR public_code 分离。各详细方案明确本层边界和接口契约。</div>
+    <p><a href="../需求/欧盟电池护照需求方案.html">返回第一步：需求方案</a></p>
+  </section>
+
+  <section class="panel">
+    <h2>03 · 数据源与接入方式</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>来源类别</th><th>数据示例</th><th>首期建议接入方式</th><th>架构定位</th></tr></thead>
+      <tbody>
+        <tr><td>制造商 / 供应链</td><td>电池型号、化学体系、额定参数、生产信息、组成及相关证明材料</td><td>管理工作台填报 + 标准模板批量导入</td><td>首期主要基础数据源</td></tr>
+        <tr><td>品牌 / 产品业务系统</td><td>产品 SKU、型号关系、投放市场信息、经济运营者信息</td><td>模板导入；后续通过 API 同步</td><td>补充产品与市场主数据</td></tr>
+        <tr><td>测试与合规资料</td><td>性能耐久、碳足迹、回收含量、声明和证据文件</td><td>附件上传并关联字段/型号；后续系统集成</td><td>数据依据与审核输入</td></tr>
+        <tr><td>涂鸦 IoT / 设备云 / BMS</td><td>设备关联、运行状态及适用的单体电池动态数据</td><td>首期可先不阻塞；后续经授权 API 接入</td><td>运行及生命周期数据源</td></tr>
+        <tr><td>服务与生态伙伴</td><td>维修、更换、再利用、再制造、回收等事件</td><td>后续通过伙伴工作台/API 逐步接入</td><td>生命周期补充数据源</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">建议初期优先用结构化模板和人工审核跑通闭环，验证字段定义及责任链后再增加系统接口；设备云接入属于数据来源之一，而不是生成护照的前置条件。</p>
+  </section>
+
+  <section class="panel">
+    <h2>04 · 端到端核心数据流</h2>
+    <div class="flow">
+      <div class="step"><b>1 · 来源提供</b>供应链、业务系统、文件资料或授权设备数据进入平台。</div>
+      <div class="step"><b>2 · 接入解析</b>文件/接口识别，检查基本格式，生成导入结果和问题反馈。</div>
+      <div class="step"><b>3 · 结构化归档</b>映射到统一电池数据模型，关联型号、批次、单体与来源证据。</div>
+      <div class="step"><b>4 · 治理审核</b>执行规则检查、补齐缺项、责任人确认和发布审批。</div>
+      <div class="step"><b>5 · 护照服务</b>绑定电池唯一标识，形成版本化护照并通过二维码/接口提供访问。</div>
+    </div>
+    <div class="callout"><strong>数据状态建议：</strong>已接收 → 已解析 → 待补充/待校验 → 待审核 → 已发布 → 已更新/已失效。只有完成治理和授权审核的数据进入公开或受控的护照展示。</div>
+  </section>
+
+  <section class="panel">
+    <h2>05 · 统一结构化数据的概念模型</h2>
+    <p>逻辑上先确定数据对象，不在本阶段定义物理数据库或字段级接口。</p>
+    <div class="grid">
+      <div class="card"><h3>电池型号</h3><p>描述型号级属性及相对稳定的技术、性能和合规信息。</p></div>
+      <div class="card"><h3>生产批次</h3><p>承接批次相关的生产、测试或材料差异信息。</p></div>
+      <div class="card"><h3>单体电池</h3><p>以电池 SN 或平台标识定位实体电池，关联型号/批次与二维码入口。</p></div>
+      <div class="card"><h3>设备关联</h3><p>连接电池与阳台光伏一体机、户用储能系统等设备；支持更换和关系历史。</p></div>
+      <div class="card"><h3>生命周期事件</h3><p>承接运行数据、维修、更换、再利用、再制造、回收等动态信息。</p></div>
+      <div class="card"><h3>来源与证据</h3><p>记录字段来源、责任方、导入批次、证明材料、校验及审核情况。</p></div>
+    </div>
+    <p class="muted">具体字段目录、单位/枚举、法规条款映射、可见级别和必填规则，作为下一阶段的数据字典专题再细化。</p>
+  </section>
+
+  <section class="panel">
+    <h2>06 · 核心模块边界</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>模块</th><th>主要职责</th><th>本阶段关注</th></tr></thead>
+      <tbody>
+        <tr><td>数据接入中心</td><td>管理填报、文件批量导入、外部接口与后续 IoT 接入。</td><td>明确入口类型与来源责任，不展开具体 API。</td></tr>
+        <tr><td>数据模型与档案中心</td><td>维护统一电池对象、型号/批次/单体关系及数据版本。</td><td>先确认逻辑对象和关系。</td></tr>
+        <tr><td>数据治理中心</td><td>标准化、校验、质量状态、证据管理与审核流程。</td><td>明确“接入数据”和“可发布数据”的边界。</td></tr>
+        <tr><td>护照管理中心</td><td>创建护照、绑定标识、版本维护、发布与失效处理。</td><td>明确护照对象与电池标识关系。</td></tr>
+        <tr><td>护照访问服务</td><td>二维码解析、公开页面、授权查询与数据导出。</td><td>明确统一访问入口和分级访问原则。</td></tr>
+        <tr><td>平台横向支撑</td><td>组织权限、安全、审计、规则配置、监控和备份。</td><td>作为所有模块的共性能力纳入设计。</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="panel">
+    <h2>07 · 方案状态与后续</h2>
+    <div class="grid">
+      <div class="card"><h3>本稿定位</h3><p>本页维护六层逻辑架构、数据流和方案索引；各层开发级设计、接口示例、数据模型与验收点请从上方索引进入对应方案。</p></div>
+      <div class="card"><h3>仍需项目化确认</h3><p>法规字段/访问权限、试点 SKU 与电池边界、各品牌责任主体、平台组织标准、正式 SLA 与容量目标。</p></div>
+    </div>
+    <h3>建议实施顺序</h3>
+    <ol>
+      <li>由产品/合规确认试点 SKU、电池组成、SN 命名规则及投放欧盟市场的责任主体。</li>
+      <li>由合规 owner 审核法规字段字典与公开/受控字段映射，作为 L4/L5 开发的基线。</li>
+      <li>按 L1→L2→L3→L4→L5→L6 完成模块联调；可并行开展 L1 数据盘点与 L6 原型。</li>
+      <li>选定一款阳台光伏一体机或户储产品跑通从源数据到二维码访问的端到端试点。</li>
+    </ol>
+    <div class="callout warn">各层文档提供开发基线，不取代业务、法规、安全团队确认。法规要求、实际责任边界和组织技术规范优先于方案草案。</div>
+  </section>
+
+  <section class="panel">
+    <h2>参考依据</h2>
+    <ul>
+      <li><a href="../需求/欧盟电池护照需求方案.html">第一步：欧盟电池护照需求方案</a></li>
+      <li><a href="https://eur-lex.europa.eu/eli/reg/2023/1542/oj/eng" target="_blank" rel="noopener">Regulation (EU) 2023/1542 官方文本</a></li>
+    </ul>
+    <p class="muted">文档版本：Draft 0.2 · 2026-11-10</p>
+  </section>
+</main>
+<div class="footer">Tuya 电池护照平台 · 分层技术架构方案 · 本地 HTML</div>
+</body>
+</html>

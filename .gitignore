@@ -1,0 +1,6 @@
+**/target/
+**/node_modules/
+**/dist/
+l1-cloud-data/data/
+*.tsbuildinfo
+.DS_Store

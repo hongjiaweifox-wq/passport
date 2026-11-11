@@ -1,0 +1,435 @@
+﻿dpp_no,category,sub_category,field_code,display_name_en,display_name_zh,value_type,unit_code,visibility_class,granularity,mandatory_stationary,static_dynamic,storage_target,implementation_status,legal_reference,short_definition,example_value,requirement_notes
+1,DPP header,DPP Information,dpp_schema_version,DPP Schema version,DPP 架构版本,STRING,,PUBLIC,Battery model,true,STATIC,HEADER,GENERATED,JTC-24 EN 18223 (4.1.2.1 Table 1),"The reference standard the DPP instance schema refers to
+DPP实例模式引用的标准",dpp-schema/1.0,DPP实例模式引用的标准
+2,DPP header,DPP Information,dpp_status,DPP Status,DPP 状态,STRING,,PUBLIC,Individual battery,true,STATIC,HEADER,GENERATED,JTC-24 EN 18223 (4.1.2.1 Table 1),"The current status of the DPP as a digital resource
+DPP作为数字资源的当前状态",ACTIVE,"作为数字资源的 DPP 实例状态。
+示例：
+active：有效/启用中
+inactive：未启用/非活动状态
+archived：已归档
+invalid：已失效"
+3,DPP header,DPP Information,dpp_granularity,DPP Granularity,DPP 粒度,STRING,,PUBLIC,Battery model,true,STATIC,HEADER,GENERATED,JTC-24 EN 18223 (4.1.2.1 Table 1),"The required level of information with regard to product item, batch or model
+产品单体、批次或型号层级的信息粒度要求",item,"根据 ESPR 的规定，ProductID 的粒度层级包括：型号（Model）、批次（Batch）或单体（Item）。
+在电池护照中，该字段的取值应为“Item（单体）”，因为每一块电池都将拥有独立的电池护照"
+4,DPP header,DPP Information,dpp_last_updated,Date-time of latest update of DPP,DPP最新更新的日期和时间,DATETIME,,PUBLIC,Individual battery,true,DYNAMIC,HEADER,GENERATED,JTC-24 EN 18223 (4.1.2.1 Table 1),"Date and time of the latest update of the battery passport
+电池护照最近更新时间",2026-03-15T09:00:00Z,该 DPP 实例最近一次更新的日期和时间
+5,DPP header,Identifier,dpp_identifier,Unique battery passport identifier / unique DPP identifier,唯一电池护照标识符,STRING,,PUBLIC,Individual battery,true,DYNAMIC,HEADER,GENERATED,"Art. 77(3) and (10); Art. 3(66);
+JTC-24 EN 18222 (4.2) & EN 18223 (4.1.2.1 Table 1 and 4.2)","The unique identifier of a battery passport, equivalent to the unique DPP identifier in the JTC-24 standards
+电池护照唯一标识符（等同于 JTC-24 标准中的 DPP 唯一标识符）",urn:dpp:DEMO-ORG:DEMO-EV-0001,"唯一电池护照标识符（Unique Battery Passport Identifier）/ 唯一 DPP 标识符（Unique DPP Identifier） 用于区分和识别已归档的不同版本，并且应唯一对应（解析到）某一个特定版本的电池护照。
+注：
+JTC-24 标准规定，数字产品护照（DPP）在更新后应具备归档功能（动态数据可能存在例外情况）。
+注：
+电池护照在更新后生成的新版本将获得新的唯一电池护照标识符（Unique Battery Passport Identifier）/ 唯一 DPP 标识符（Unique DPP Identifier）。
+原有的唯一电池护照标识符 / 唯一 DPP 标识符将与对应的旧版电池护照一同归档保存。
+因此，最初生成的唯一电池护照标识符 / 唯一 DPP 标识符（通常存储于欧盟 DPP 注册库中）将始终对应电池护照的第一个版本"
+6,DPP header,Identifier,unique_battery_identifier,Unique battery identifier / unique product identifier,唯一电池标识符 / 唯一产品标识符（UPI）,STRING,,PUBLIC,Individual battery,true,STATIC,HEADER,GENERATED,"Art. 77(3); Art. 3(66);
+JTC-24 EN 18219,
+JTC-24  EN 18222 (4.3) & EN 18223 (4.1.2.1 Table 1)","The unique identifier of the battery item, equivalent to the unique product identifier in the JTC-24 standards
+电池单体唯一标识符（等同于 JTC-24 标准中的产品唯一标识符）",DEMO-EV-0001,"电池护照必须包含用于识别电池的信息。电池护照必须能够通过二维码（QR Code）访问，该二维码应链接至一个持久唯一电池标识符（Persistent Unique Battery Identifier）。电池标识符是一串唯一字符，用于识别电池，并能够链接到相应的电池护照。
+电池标识符应符合以下标准之一：
+ISO/IEC 15459-1:2014
+ISO/IEC 15459-2:2015
+ISO/IEC 15459-3:2014
+ISO/IEC 15459-4:2014
+ISO/IEC 15459-5:2014
+ISO/IEC 15459-6:2014
+或与上述标准等效的其他标准。
+电池标识符还必须符合 EN 18219 第 5 章定义的至少一种产品标识（ID）方案（ID Scheme），但 RFID 标签专用的 ID Scheme 4 除外。
+注：
+根据 JTC-24 EN 18219 标准，第 4 章规定唯一产品标识符（在此即唯一电池标识符）应遵循以下原则：
+（4.1）全球唯一性（Global Uniqueness）
+（4.2）持久性（Persistence）
+（4.3）语法规范（Syntax）
+（4.4）粒度（Granularity）
+（4.5）互操作性（Interoperability）
+（4.6）开放性（Openness）
+将电池投放市场的经济运营者必须为该电池分配电池标识符。
+注：
+唯一电池标识符（Unique Battery Identifier）/ 唯一产品标识符（Unique Product Identifier）还必须显示在电池标签上。若因电池尺寸或性质原因无法直接标注，则应将相关信息标注在包装上，或载于随电池附带的文件中"
+7,DPP header,Identifier,unique_economic_operator_identifier,Unique economic operator identifier,唯一经济运营商标识符,STRING,,REGULATOR,Individual battery,true,STATIC,GENERIC,GENERIC,"ESPR Art. 2 (31), 12 (2); Annex XIII (1a) Annex VI Part A; Art. 3(66); Art. 77 (3)
+JTC-24 EN 18219 (4.1.1); JTC-24 EN 18223 (4.1.2.1 Table 1)","The unique identifier of the economic operator 
+经济运营者唯一标识符",DEMO-ORG,"电池护照必须包含运营者标识符（Operator Identifier）。运营者标识符是一串用于识别参与产品价值链活动主体的唯一字符（参见 ESPR 第 2(31) 条）。该标识符对应于负责创建或更新电池护照的经济运营者（Economic Operator）。
+如果唯一运营者标识符尚不可用，则“创建或更新数字产品护照的经济运营者应代表相关主体申请唯一运营者标识符。”（参见 ESPR 第 12(2) 条）
+在适用于相关产品的情况下，唯一运营者标识符应符合以下标准之一：
+ISO/IEC 15459-1:2014
+ISO/IEC 15459-2:2015
+ISO/IEC 15459-3:2014
+ISO/IEC 15459-4:2014
+ISO/IEC 15459-5:2014
+ISO/IEC 15459-6:2014
+或与上述标准等效的其他标准，直至相关协调标准被列入《欧盟官方公报》（OJEU）。（另见 ESPR 附录 III）
+唯一经济运营者标识符必须符合 EN 18219 第 6 章定义的至少一种经济运营者和设施标识方案（ID Scheme）。
+电池护照必须包含运营者标识符。运营者标识符是一串用于识别参与产品价值链活动主体的唯一字符（参见 ESPR 第 2(31) 条），对应于负责创建或更新电池护照的经济运营者。
+如果唯一运营者标识符尚不可用，则“创建或更新数字产品护照的经济运营者应代表相关主体申请唯一运营者标识符。”（参见 ESPR 第 12(2) 条）
+在适用于相关产品的情况下，唯一运营者标识符应符合 ISO/IEC 15459 系列标准（第 1 至第 6 部分）或其等效标准，直至相关协调标准正式发布于《欧盟官方公报》（OJEU）。
+唯一经济运营者标识符必须符合 EN 18219 第 6 章规定的至少一种经济运营者和设施标识方案"
+8,DPP header,Identifier,unique_facility_identifier,Unique facility identifier,唯一设施标识符,STRING,,REGULATOR,Battery model per manufacturing site,false,STATIC,GENERIC,GENERIC,JTC-24 EN 18219 (6); JTC-24 EN 18219; ESPR Annex III,"The unique identifier of a facility
+设施唯一标识符",FAC-DE-001,"唯一设施标识符（Unique Facility Identifier） 是一串唯一字符，用于识别产品价值链中涉及的地点或建筑物，或由参与产品价值链活动主体所使用的地点或建筑物。（JTC-24 prEN 18219 第 3.20 条）
+对于相关产品，唯一设施标识符应符合以下标准之一：
+ISO/IEC 15459-1:2014
+ISO/IEC 15459-2:2015
+ISO/IEC 15459-3:2014
+ISO/IEC 15459-4:2014
+ISO/IEC 15459-5:2014
+ISO/IEC 15459-6:2014
+（见 ESPR 附录 III）
+唯一设施标识符必须符合 EN 18219 第 6 章定义的至少一种经济运营者和设施标识方案（ID Scheme）"
+9,DPP header,Identifier,content_specification_ids,Content specification Ids,内容规范标识符,ARRAY,,PUBLIC,,false,STATIC,GENERIC,GENERIC,JTC-24 EN 18223 (4.1.2.1 Table 1),"Reference to horizontal or product-type related content specifications for the DPP
+DPP适用的横向或产品类型内容规范引用","[""dpp-schema/1.0"",""battery-regulation-2023/1542""]","JTC-24 EN 18223 中 DPP 头部信息（DPP Header）示例：""contentSpecificationIds"": [""EN123_xyz"", ""EN456_abc""]"
+10,Identifiers and product data,Identifier,battery_model_identifier,Battery model identifier,电池型号标识符,STRING,,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,NATIVE,NATIVE,Article 3(19); CF declaration IA (draft),"The unique identifier of the battery model.
+电池型号唯一标识符",DEMO-EV-2026,"电池型号标识符（Battery Model Identifier）是属于同一电池型号的所有电池共同拥有的属性。电池型号是指一种电池版本，其所有单元均具有相同的技术特性，而这些技术特性与《电池法规》中关于可持续性、安全性、标签、标记和信息要求的规定相关。
+型号标识符是一个唯一的字符序列（Unique String of Characters），并且是《碳足迹声明实施法案（CF Declaration IA）草案》要求提供的信息"
+11,Identifiers and product data,Identifier,battery_serial_number,Battery serial number,电池序列号,STRING,,PUBLIC,Individual battery,true,STATIC,NATIVE,NATIVE,"Article 38(6); Annex IX, 1","Serial number of the battery including information on the battery batch
+电池序列号（包含电池批次信息）",CBCCAE2509270047,"注：应同时考虑《电池法规》中以下虽未直接针对电池护照，但与其密切相关的要求：
+制造商应确保其投放市场的电池带有型号标识以及批次号、序列号、产品编号或其他能够实现电池识别的要素。
+若由于电池的尺寸或性质原因无法在电池本体上标注相关信息，则应将所需信息标注于包装上，或载于随电池附带的文件中。
+欧盟符合性声明（Declaration of Conformity）要求提供以下信息（除其他信息外）：
+电池型号（产品、类别以及批次号或序列号）"
+12,Identifiers and product data,Identifier,manufacturer_id,Unique manufacturer identifier,唯一制造商标识符,STRING,,REGULATOR,Battery model per manufacturing site,true,STATIC,NATIVE,NATIVE,Annex VI Part A (1); Art. 38(7); ESPR Art. 2(32); ESPR Art. 12(1); ESPR Annex III; JTC-24 EN 18219,"The unique identifier of the manufacturer of the battery.
+电池制造商唯一标识符",DEMO-ORG,"对于相关产品，唯一制造商标识符（Unique Manufacturer Identifier） 应符合以下标准之一：
+ISO/IEC 15459-1:2014
+ISO/IEC 15459-2:2015
+ISO/IEC 15459-3:2014
+ISO/IEC 15459-4:2014
+ISO/IEC 15459-5:2014
+ISO/IEC 15459-6:2014
+或在《欧盟官方公报》（OJEU）公布相关协调标准之前，符合等效的欧洲或国际标准（另见 ESPR 附录 III）。
+此外，唯一制造商标识符必须符合 EN 18219 第 6 章规定的至少一种经济运营者和设施标识方案（ID Scheme）"
+13,Identifiers and product data,Identifier,third_party_service_provider,Third party service provider,第三方服务提供商,STRING,,REGULATOR,Individual battery,true,STATIC,GENERIC,GENERIC,EU registry IA Art. 8(9c),"reference to the third party service provider to be stored in the EU registry
+存储于欧盟注册系统中的第三方服务提供商标识信息",TÜV Rheinland,"欧盟委员会应将以下信息作为注册数据的一部分存储于注册系统（Registry）中：
+[...]
+c）在适用情况下，数字产品护照服务提供商（Digital Product Passport Service Provider）的相关引用信息；
+根据《电池法规》，服务提供商可以是任何第三方主体，而并不限于 ESPR 所定义的数字产品护照服务提供商（DPP Service Provider）"
+14,Identifiers and product data,Product data,economic_operator_information,Economic operator information,经济运营商信息,STRING,,PUBLIC,Individual battery,true,STATIC,GENERIC,GENERIC,"Art. 3, 1(22)","Information related to the economic operator 
+经济运营者相关信息","{""name"":""Demo Battery GmbH"",""address"":""Berlin, DE""}",经济运营者相关信息
+15,Identifiers and product data,Product data,manufacturer_information,Manufacturer information,制造商信息,STRING,,PUBLIC,Battery model per manufacturing site,true,STATIC,NATIVE,NATIVE,"Annex VI Part A (1); Art. 3, 1(33); Art. 38(7)","Information related to the manufacturer of the battery
+电池制造商相关信息",Demo Battery GmbH,"电池护照必须包含用于识别制造商的信息。
+制造商信息还必须标注在电池标签上。若无法在电池本体上标注所要求的信息，则应将相关信息标注于包装上或随附于电池的文件中。
+制造商信息应至少包括：
+制造商名称；
+注册商号（Registered Trade Name）或注册商标（Registered Trademark）；
+邮寄地址，并指定一个单一联系点（Single Contact Point）；
+网站地址（如有）；
+电子邮箱地址（如有）。
+联系方式应以终端用户和市场监督机构易于理解的一种或多种语言提供。"
+16,Identifiers and product data,Product data,manufacturing_place,Manufacturing place,制造地点,STRING,,PUBLIC,Battery model per manufacturing site,true,STATIC,GENERIC,GENERIC,"Annex XIII (1a); Annex VI, Part A(3); Labelling IA (draft)","The place of manufacture of the battery
+电池制造地点","Berlin, DE","电池护照必须包含制造地点（即电池制造工厂的地理位置）信息。
+制造地点应以**城市（Town）、地区（Region）和国家/司法管辖区（Country/Jurisdiction）**的形式进行标示。
+制造地点还必须标注在电池标签上。"
+17,Identifiers and product data,Product data,manufacturing_date,Manufacturing date,制造日期,DATE,,PUBLIC,Individual battery,true,STATIC,NATIVE,NATIVE,Annex XIII (1a); Annex VI Part A (4); Annex VII Part B (1); Labelling IA (draft),"The date of manufacture of the battery
+电池制造日期",2026-03-15,"电池护照必须包含制造日期（年月）信息。
+制造日期还必须标注在电池标签上。
+制造日期应由生产日期中的月份和年份组成。"
+18,Identifiers and product data,Product data,date_of_putting_the_battery_into_service,Date of putting the battery into service,电池投入使用日期,DATE,,PUBLIC,Individual battery,false,STATIC,GENERIC,GENERIC,Annex VII Part B (1),"The date of first use, for its intended purpose, in the European Union, of a battery, without having been previously placed on the market
+电池在此前未投放市场的情况下，于欧盟境内首次按其预定用途投入使用的日期",2026-04-01,电池在此前未投放市场的情况下，于欧盟境内首次按其预定用途投入使用的日期
+19,Identifiers and product data,Product data,warranty_period_of_the_battery,Warranty period of the battery,电池保修期,STRING,,PUBLIC,Individual battery,false,STATIC,GENERIC,GENERIC,Annex XIII (1m),"Commercial warranty period for the battery
+电池商业保修期",8 years,电池护照必须包含商业保修适用期限的信息。
+20,Identifiers and product data,Product data,battery_category,Battery category,电池类别,STRING,,PUBLIC,Battery model,true,STATIC,NATIVE,NATIVE,Annex XIII (1a); Annex VI Part A (2),"Description of the scope of application of a battery in terms of its use according to the battery regulation
+根据《电池法规》规定的电池使用范围说明",EV,"电池护照必须包含电池类别（Battery Category）信息。
+电池类别还必须标注在电池标签上。
+电池应根据其预期用途划分为以下类别：
+轻型交通工具电池（LMT Battery）；
+电动汽车电池（Electric Vehicle Battery）；或
+工业电池（Industrial Battery），包括：
+固定式电池储能系统（Stationary Battery Energy Storage System）；以及
+其他工业电池（Other Industrial Batteries）。"
+21,Identifiers and product data,Product data,battery_mass,Battery mass,电池质量,DECIMAL,g or kg,PUBLIC,Battery model,true,STATIC,NATIVE,NATIVE,Annex XIII (1a); Annex VI Part A (5); Labelling IA (draft),"The mass of the battery
+电池质量",450,"电池护照必须包含电池重量（Battery Weight）信息。
+注： 在其他情况下，我们均使用“质量（Mass）”这一术语，而法规中使用的是“重量（Weight）”。由于法规规定的单位为千克（kg）或克（g），从物理学角度来看，更准确的术语应为“质量（Mass）”。
+电池质量还必须标注在电池标签上。"
+22,Identifiers and product data,Product data,battery_status,Battery status,电池状态,STRING,,RESTRICTED,Individual battery,true,DYNAMIC,NATIVE,NATIVE,Annex XIII 4(c),"Current status of the battery item in its life cycle
+电池单体当前生命周期状态",IN_USE,"电池护照必须包含电池状态（Battery Status）信息。
+电池状态应定义为以下类别之一：
+原始状态（Original）
+梯次利用（Repurposed）
+再利用（Re-used）
+再制造（Remanufactured）
+废弃（Waste）
+当电池经过以下任一情形处理后重新投放市场时，必须为其签发新的电池护照：
+再制造（Remanufacturing）；
+梯次利用（Repurposing）；
+再利用准备（Preparation for Re-use）处理；
+梯次利用准备（Preparation for Repurposing）处理"
+23,"Symbols, labels and documentation of conformity",-,separate_collection_symbol,Separate collection symbol,,URI,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1s); Art. 13(4);  Annex VI Part B,"Symbol indicating the necessity of separate collection
+表明需单独收集的标识符号",https://example.com/symbols/separate-collection.svg,"电池护照必须包含分类收集标识（Separate Collection Symbol）。
+自 2025 年 8 月 18 日起，所有电池均必须在标签上标注分类收集标识。
+该分类收集标识的面积应至少占电池最大侧面面积的 3%，且其最大尺寸不得超过 5 cm × 5 cm。
+对于圆柱形电芯（Cylindrical Battery Cells）：
+该标识的面积应至少占电池表面积的 1.5%，且最大尺寸不得超过 5 cm × 5 cm。
+如果按上述要求计算得到的标识尺寸小于 0.47 cm × 0.47 cm，则无需将该标识直接标注在电池上。
+在这种情况下，应将尺寸至少为 1 cm × 1 cm 的分类收集标识印刷在产品包装上。"
+24,"Symbols, labels and documentation of conformity",-,symbols_for_cadmium_and_lead,Symbols for cadmium and lead,镉和铅的符号,URI,,PUBLIC,Battery model,false,STATIC,GENERIC,GENERIC,Annex XIII (1s) Art. 13(5);,"Representation of the chemical symbol “Cd” for cadmium and “Pb” for lead contained in the battery
+电池中所含镉（Cd）和铅（Pb）的化学符号标识",https://example.com/symbols/cd-pb.svg,"电池护照必须包含有关废旧电池预防和管理的信息，包括电池本体、电池包装或随附文件上标签和符号含义的信息。
+含有超过 0.002% 镉（Cadmium）或超过 0.004% 铅（Lead）的电池，必须标注相应金属的化学符号：
+Cd（镉）
+Pb（铅）
+该要求仅适用于实际含量超过上述阈值的情况。
+镉（Cd）或铅（Pb）符号还必须标注在电池标签上。
+用于表示重金属含量的相关化学符号应印刷在分类收集标识（Separate Collection Symbol）的下方，其面积至少应达到该分类收集标识面积的 1/4。"
+25,"Symbols, labels and documentation of conformity",-,carbon_footprint_label,Carbon footprint label,碳足迹标签,URI,,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Article 7(2) via Annex XIII (1c); Labelling IA (draft) Annex V,"Label indicating the carbon footprint and carbon footprint performance class
+标示碳足迹及碳足迹绩效等级的标签",https://example.com/labels/carbon-footprint.svg,"电动汽车电池（EV Batteries）、容量大于 2 kWh 的可充电工业电池以及轻型交通工具电池（LMT Batteries），应带有醒目、清晰可辨且不可擦除的标签，用于标示碳足迹，并声明相关电池型号在对应制造工厂下所属的碳足迹绩效等级（Carbon Footprint Performance Class）。
+标签的格式由《标签实施法案》（Labelling IA）规定，并应包含以下内容：
+根据《欧盟条例（EU）2023/1542》第 7 条第 2 款第 4 子段 (a) 项，为相关电池类别设立碳足迹绩效等级的授权法案（Delegated Act）引用信息；
+根据相关碳足迹绩效等级授权法案确定的碳足迹绩效等级声明；
+按照相关授权法案规定的方法计算并声明的生命周期碳足迹（Life-cycle Carbon Footprint），以两位有效数字（Two Significant Figures）的精度表示；
+欧盟委员会通过相关授权法案规定的方法中所定义的功能单位（Functional Unit）"
+26,"Symbols, labels and documentation of conformity",-,extinguishing_agent,Extinguishing agent,灭火剂,STRING,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex VI Part A (9); Labelling IA (draft),"Specification of the usable extinguishing agent
+适用灭火剂说明",Water mist,"电池护照必须包含适用灭火剂（Usable Extinguishing Agent）信息；如适用，还应包含根据 EN 2:2005 标准确定的该灭火剂所属火灾类别（Fire Class）信息。
+适用灭火剂信息还必须标注在电池标签上"
+27,"Symbols, labels and documentation of conformity",-,meaning_of_labels_and_symbols,Meaning of labels and symbols,标识及符号说明,STRING,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1s);Art. 74 1(e); Labelling IA (draft),"Brief and easily understandable explanatory sentence conveying the meaning of symbols and labels used
+用于说明所使用标识和标签含义的简明易懂说明文字",分类回收符号表示电池不得投入生活垃圾。,"电池护照必须包含有关废旧电池预防和管理的信息，包括对电池、电池包装或随附文件中标签和符号含义的说明。
+相关信息应以终端用户易于理解的一种或多种语言提供。
+电池标签中使用的所有标签和符号，均应附有简洁且易于理解的说明文字。"
+28,"Symbols, labels and documentation of conformity",-,eu_declaration_of_conformity,EU declaration of conformity,欧盟符合性声明,URI,,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII (1r); Art. 18; Annex IX,"The document that declares compliance with requirements for placement on EU market
+声明符合欧盟市场投放要求的文件",https://example.com/docs/eu-declaration.pdf,"电池护照必须包含欧盟符合性声明（EU Declaration of Conformity）。
+关于欧盟符合性声明，《电池法规》规定了以下要求（参见《电池法规》附件 XIII 第 1(r) 项以及第 18(2) 条）：
+欧盟符合性声明应采用附件 IX 规定的标准结构；
+欧盟符合性声明应包含附件 VIII 相关合规模块中规定的各项内容；
+欧盟符合性声明必须保持最新状态；
+其内容应翻译成电池投放市场、提供市场供应或投入使用所在成员国要求的一种或多种语言；
+欧盟符合性声明应以电子格式编制，并且在提出要求时，应能够提供纸质版本。"
+29,"Symbols, labels and documentation of conformity",-,results_of_test_reports_proving_compliance,Results of test reports proving compliance,证明符合要求的测试报告结果,URI,,REGULATOR,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII (3); Annex VIII Part A 2(h),"Test report results proving compliance with the requirements stated in the battery regulation
+证明符合《电池法规》要求的测试报告结果",https://example.com/reports/test-summary.pdf,电池护照必须包含能够证明符合《电池法规》相关要求的测试报告结果
+30,Battery carbon footprint,-,battery_carbon_footprint_per_functional_unit,Battery carbon footprint per Functional Unit,每个功能单位的电池碳足迹,DECIMAL,kgCO2eq/kWh,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII (1c) → Art. 7; EV CF DA (draft); CF declaration IA (draft),"The battery carbon footprint must be included as declared in terms of kg of carbon dioxide equivalent per one kWh of the total energy provided by the battery over its expected service life.
+电池碳足迹应按声明值提供，单位为每千瓦时（kWh）预期使用寿命期间所提供总能量对应的二氧化碳当量千克（kg CO₂e）",62.4,电池护照必须包含电池每个功能单位（Functional Unit）的碳足迹信息，该信息应与电池碳足迹声明（Battery Carbon Footprint Declaration）中所声明的数值一致，并按照相关实施法案关于声明格式的规定执行
+31,Battery carbon footprint,-,contribution_of_raw_material_acquisition_and_pre_processing_lifecycle_stage,Contribution of raw material acquisition and pre-processing lifecycle stage,原材料开采及预处理阶段对碳足迹的贡献,DECIMAL,kgCO2eq/kWh,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII (1c) → Art. 7; Annex II (4); EV CF DA (draft); CF declaration IA (draft),"Contribution of raw material acquisition and pre-processing lifecycle stage to the battery carbon footprint
+原材料获取与预处理生命周期阶段对电池碳足迹的贡献",31.2,"电池护照必须包含电池碳足迹中“原材料获取与预处理（Raw Material Acquisition and Pre-processing）”生命周期阶段的贡献。
+关于系统边界（System Boundaries）和报告要求，相关规定已在关于碳足迹方法学的授权法案（Delegated Acts）中明确，具体可参见“单位功能单位电池碳足迹（Battery Carbon Footprint per Functional Unit）”数据项的相关要求。
+本数据项应满足与“单位功能单位电池碳足迹（Battery Carbon Footprint per Functional Unit）”相同的强制性要求。"
+32,Battery carbon footprint,-,contribution_of_main_product_production_lifecycle_stage,Contribution of main product production lifecycle stage,产品生产生命周期阶段贡献,DECIMAL,kgCO2eq/kWh,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII (1c) → Art. 7; Annex II (4); EV CF DA (draft); CF declaration IA (draft),"Contribution of the main product production lifecycle stage to the battery carbon footprint
+产品生产生命周期阶段对电池碳足迹的贡献",18.6,"电池护照必须包含电池碳足迹中“主要产品生产（Main Product Production）”生命周期阶段的贡献。
+关于系统边界（System Boundaries）和报告要求，相关规定已在关于碳足迹计算方法的授权法案（Delegated Acts）中明确，具体可参见“单位功能单位电池碳足迹（Battery Carbon Footprint per Functional Unit）”数据项中所述的方法要求。
+本数据项应满足与“单位功能单位电池碳足迹（Battery Carbon Footprint per Functional Unit）”相同的强制性要求。"
+33,Battery carbon footprint,-,contribution_of_distribution_lifecycle_stage,Contribution of distribution lifecycle stage,分销生命周期阶段贡献,DECIMAL,kgCO2eq/kWh,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII 1(c) → Art. 7; Annex II (4); EV CF DA (draft); CF declaration IA (draft),"Contribution of the distribution lifecycle stage to the battery's carbon footprint
+分销生命周期阶段对电池碳足迹的贡献",4.8,"电池护照必须包含电池碳足迹中“分销（Distribution）”生命周期阶段的贡献。
+关于系统边界（System Boundaries）和报告要求，相关规定已在关于碳足迹计算方法的授权法案（Delegated Acts）中明确，具体可参见“单位功能单位电池碳足迹（Battery Carbon Footprint per Functional Unit）”数据项中所述的方法要求。
+本数据项应满足与“单位功能单位电池碳足迹（Battery Carbon Footprint per Functional Unit）”相同的强制性要求。"
+34,Battery carbon footprint,-,contribution_of_end_of_life_and_recycling_lifecycle_stage,Contribution of end of life and recycling lifecycle stage,寿命终止及回收生命周期阶段贡献,DECIMAL,kgCO2eq/kWh,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII (1c) → Art. 7; Annex II (4); EV CF DA (draft); CF declaration IA (draft),"Contribution of the end of life and recycling lifecycle stage to the battery's carbon footprint
+寿命终止及回收生命周期阶段对电池碳足迹的贡献",7.8,"电池护照必须包含电池碳足迹中“寿命终止与回收（End of Life and Recycling）”生命周期阶段的贡献。
+关于系统边界（System Boundaries）和报告要求，相关规定已在关于碳足迹计算方法的授权法案（Delegated Acts）中明确，具体可参见“单位功能单位电池碳足迹（Battery Carbon Footprint per Functional Unit）”数据项所述的方法要求。
+本数据项应满足与“单位功能单位电池碳足迹（Battery Carbon Footprint per Functional Unit）”相同的强制性要求。"
+35,Battery carbon footprint,-,carbon_footprint_performance_class,Carbon footprint performance class,碳足迹绩效等级,STRING,,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII (1c); Art. 7(2); Labelling IA (draft) Annex V,"Depending on the distribution of the values in the carbon footprint declarations of batteries placed on the market, a meaningful number of classes of performance shall be identified, with category A being the best class with the lowest carbon footprint life cycle impact, to enable market differentiation
+根据已投放市场电池的碳足迹声明数值分布情况，应确定具有实际意义的若干性能等级。其中，A 类应为最佳等级，对应生命周期碳足迹影响最低的电池，以实现市场差异化。",B,"电池护照（Battery Passport）应依据《电池法规》第 7 条关于碳足迹绩效等级的授权法案（Delegated Acts）和实施法案（Implementing Acts）生效情况，纳入相应的碳足迹绩效等级（Carbon Footprint Performance Class）信息。
+碳足迹绩效等级应在碳足迹标签（Carbon Footprint Label）上予以标示。"
+36,Battery carbon footprint,-,web_link_to_public_carbon_footprint_study,Web link to public carbon footprint study,公开碳足迹研究报告链接,URI,,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII (1c); Art. 7 1(g); EV CF DA (draft),"The public version of the carbon footprint study
+碳足迹研究的公开版本",https://example.com/carbon-footprint-study,"电池护照必须包含指向碳足迹研究报告（Carbon Footprint Study）的网页链接，该研究报告应作为电池碳足迹声明（Battery Carbon Footprint Declaration）的配套文件提供。
+相关信息内容和报告要求已在对应的授权法案（Delegated Acts）中规定，具体要求可参见 6.3.2“单位功能单位电池碳足迹（Battery Carbon Footprint per Functional Unit）”。"
+37,Battery carbon footprint,-,absolute_battery_carbon_footprint,Absolute battery carbon footprint,电池绝对碳足迹,INTEGER,kgCO2eq,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",false,STATIC,GENERIC,GENERIC,n.a.,"Battery carbon footprint as absolute number 
+电池碳足迹绝对值",4524,电池碳足迹绝对值
+38,Supply chain due diligence,-,information_of_due_diligence_report,Information of due diligence report,尽职调查报告信息,URI,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Art. 52(3),"The report on the supply chain due diligence policy, risk management plan, and summary of third-party verification.
+供应链尽职调查政策、风险管理计划及第三方核查摘要报告",https://example.com/docs/due-diligence.pdf,"电池护照必须包含《电池法规》（Battery Regulation）第 52(3) 条所述尽职调查政策报告中关于负责任采购（Responsible Sourcing）的信息。
+尽职调查报告必须可通过电池护照以及互联网免费向公众开放获取。
+该报告以及因此在电池护照中提供的信息，应涵盖以下四个方面的数据和信息：
+供应链尽职调查政策（Supply Chain Due Diligence Policy）：经济运营者为满足第 49 条规定要求所采取的措施。
+风险管理计划（Risk Management Plan）：经济运营者为满足第 50 条规定要求所采取的措施，包括已识别出的重大不利影响（Significant Adverse Impacts）。
+第三方核查总结报告（Summary Report of Third-Party Verification）：根据第 51 条开展的第三方核查活动及其结果摘要。
+关于信息获取、公众参与决策以及获得司法救济机会的说明（Access to Information, Public Participation in Decision-Making and Access to Justice）。"
+39,Supply chain due diligence,-,third_party_assurances_of_recognised_schemes,Third party assurances of recognised schemes,认可方案的第三方保证信息,STRING,,PUBLIC,Battery model,false,STATIC,GENERIC,GENERIC,Art. 49(d),"Information on supply chain scheme assurances granted by third-party actors
+第三方机构提供的供应链体系保证信息",RMI RMAP,第三方机构提供的供应链体系保证信息
+40,Supply chain due diligence,-,supply_chain_indices,Supply chain indices,供应链指标,STRING,,PUBLIC,Battery model,false,STATIC,GENERIC,GENERIC,n.a.,"Information on relevant supply chain indices
+相关供应链指标信息",Cobalt 92% / Nickel 88%,相关供应链指标信息
+41,Battery materials and composition,-,materials_battery_chemistry,Battery chemistry,电池化学体系,STRING,,PUBLIC,Battery model,true,STATIC,NATIVE,NATIVE,Annex XIII (1b); Annex VI Part A (7); Labelling IA (draft),"The electrochemical composition reflecting active materials in cathode and anode, and - voluntarily - electrolyte
+反映正极和负极活性材料以及（自愿提供）电解质组成的电化学组成信息",LFP,"电池护照必须包含电池化学体系（Battery Chemistry）信息。
+电池化学体系还必须标注在电池标签上。
+根据标签实施法案（Labelling IA，目前为草案版本），应采用以下术语：
+铅酸电池：“Pb”
+镍镉电池：“Ni-Cd”
+镍氢电池：“Ni-MH”
+三元锂离子电池（NMC）：“Li-ion NMC”
+磷酸铁锂离子电池（LFP）：“Li-ion LFP”
+锰酸锂离子电池（LMO）：“Li-ion LMO”
+钴酸锂离子电池（LCO）：“Li-ion LCO”
+镍钴铝锂离子电池（NCA）：“Li-ion NCA”
+金属锂电池：“Li-metal”
+钠离子电池：“Na-ion”
+对于电化学组成不属于上述任何类别的二次电池（即可充电电池），应根据其正极和/或负极材料的分子式进行标识。"
+42,Battery materials and composition,-,critical_raw_materials,Critical raw materials,关键原材料,ARRAY,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1b); Annex VI Part A (10); Labelling IA (draft),"Critical raw materials present in a concentration of more than 0,1%, weight by weight
+按重量计浓度超过 0.1% 的关键原材料","[""cobalt"",""natural graphite""]","电池护照（Battery Passport）必须包含电池中所含**关键原材料（Critical Raw Materials）**的信息。
+关键原材料清单载于《欧盟条例（EU）2024/1252》附件 II（Annex II）。
+关于关键原材料的信息还必须在**电池标签（Battery Label）**上予以提供。
+根据附件 VI A 部分第 10 点（Annex VI, Part A(10)）的规定，当某种关键原材料在电池中的含量超过 0.1%（按重量百分比，w/w） 时，必须对其进行申报。"
+43,Battery materials and composition,-,materials_used_in_cathode_anode_and_electrolyte,"Materials used in cathode, anode and electrolyte",正极材料、负极材料及电解质组成,ARRAY,,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (2a),"Detailed composition of cathode, anode and electrolyte
+正极、负极和电解质的详细组成信息","[""LFP cathode"",""graphite anode"",""LiPF6 electrolyte""]","电池护照必须包含电池详细组成信息。
+详细组成信息应包括正极（Cathode）、负极（Anode）和电解质（Electrolyte）中所使用的材料。"
+44,Battery materials and composition,-,hazardous_substances_and_their_impact,Hazardous substances and their impact,有害物质及其影响,ARRAY,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,"Annex XIII (1b); Annex VI Part A (8); Labelling IA (draft), 
+Environmental Omnibus: Draft: 2025/0397 (COD), Art. 1 (4)
+
+Annex XIII (1s); Art. 74 1(f)","Substances of very high concern in the meaning of Article 3 (1) (69) which are present in the battery, other than mercury, cadmium and lead, with a concentration equal or above 0,1%, weight on weight.’
+
+Information on the impact of substances contained in the battery on the environment, human health and the safety of persons
+
+电池中存在的高度关注物质（SVHC），即第3条第(1)款第69项定义的物质，不包括汞、镉和铅，且其质量浓度达到或超过0.1%。
+
+电池所含物质对环境、人类健康及人身安全影响的信息。",[],"电池护照必须包含有关电池中所含有害物质的信息。根据现行《电池法规》（Battery Regulation），应报告有害物质；根据《环境综合法案》草案，则应报告高度关注物质（Substances of Very High Concern, SVHC），但均不包括汞（Mercury）、镉（Cadmium）和铅（Lead）。
+所谓高度关注物质（SVHC），是指电池中存在且质量分数达到或超过 0.1%（w/w） 的物质（不包括汞、镉和铅），并符合第 3 条第 (1) 款第 69 项的定义。
+“高度关注物质”是指：
+符合《REACH 法规》（EC No 1907/2006）第 57 条规定标准，并依据该法规第 59(1) 条被识别的物质；或
+符合《REACH 法规》第 57 条标准，并被列入《CLP 法规》（EC No 1272/2008）附件 VI 的物质。
+高度关注物质（SVHC）以及《电池法规》附件 I 所限制的物质（即汞、镉和铅），应按照《CLP 法规》（EC No 1272/2008）规定的命名方式进行标识。
+电池中所含有害物质的信息还必须标注在电池标签上。
+《电池法规》第 74(3) 条规定，应能够识别有害物质在电池中的具体位置。虽然该要求并非专门针对电池护照提出，但在收到请求时必须提供，因此也可纳入电池护照中进行说明。
+此外，电池护照还必须包含有关电池中所含物质（第 74(f) 条）的影响信息，特别是有害物质的影响信息。
+该信息应涵盖这些物质对以下方面的影响：
+环境（Environment）；
+人类健康（Human Health）；
+人身安全（Safety of Persons）。
+同时，还应考虑因废旧电池处置不当而产生的影响，例如：
+随意丢弃（Littering）；
+作为未分类生活垃圾（Unsorted Municipal Waste）丢弃；
+其他不当废弃方式。
+这些情况均可能对环境、人体健康和公共安全造成不利影响。"
+45,Circularity and resource efficiency,Circularity information,dismantling_information_manuals_for_the_removal_and_the_disassembly_of_the_battery_pack,Dismantling information: Manuals for the removal and the disassembly of the battery pack,拆解信息：电池包拆除与拆解手册,URI,,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (2c),"Manual(s) containing information on the removal and disassembly of the battery pack
+包含电池包拆除与拆解信息的手册",https://example.com/manuals/dismantling.pdf,"电池护照必须包含拆解信息（Dismantling Information）。
+拆解信息至少应包括：
+展示电芯位置的电池系统/电池包爆炸图（Exploded Diagrams）；
+拆解顺序（Disassembly Sequences）；
+需要解锁的紧固方式（Fastening Techniques）的类型和数量；
+拆解所需工具；
+当存在部件损坏风险时的警示信息；
+电芯数量及其布局（Layout）。"
+46,Circularity and resource efficiency,Circularity information,part_numbers_for_components,Part numbers for components,零部件编号,URI,,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (2b),"The part numbers of components of the battery
+电池各部件的零件编号",https://example.com/parts/component-numbers.pdf,电池护照必须包含部件零件编号（Part Numbers for Components）
+47,Circularity and resource efficiency,Circularity information,information_on_sources_of_spare_parts,Information on sources of spare parts,备件来源信息,URI,,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (2b),"Information on how to contact sources of spare parts
+备件供应来源的联系信息",https://example.com/spare-parts,电池护照应提供备件供应来源的联系方式。
+48,Circularity and resource efficiency,Circularity information,safety_measures,Safety measures,安全措施,URI,,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,"Annex XIII (2d); Art. 74(1d), Art. 74(2)","Safety measures to be taken during battery handling, including the dismantling
+电池操作（包括拆解）过程中应采取的安全措施",https://example.com/manuals/safety-measures.pdf,电池护照必须包含安全措施（Safety Measures）信息
+49,Circularity and resource efficiency,Recycled and renewable content,nickel_recycled_content_share,Nickel recycled content share,镍回收材料占比,INTEGER,%,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",false,STATIC,GENERIC,GENERIC,"Annex XIII (1e); Art. 8(1), Art. 3, 1(51), Recycled content DA (draft)","The share of nickel recycled from battery manufacturing waste or post-consumer waste in the active materials of the battery
+电池活性材料中来自电池制造废弃物或消费后废弃物回收的镍含量占比",18,"电池护照必须包含再生材料含量（Recycled Content）信息。
+再生材料含量信息应包括：活性材料中镍的再生含量占比，其中该部分镍来源于电池生产废弃物（Battery Manufacturing Waste）或消费后废弃物（Post-consumer Waste）的回收，并应按每个电池型号、每个日历年度以及每个制造工厂分别进行申报。
+“电池生产废弃物” 是指：
+在电池制造过程中被剔除的材料或物品，这些材料或物品无法作为同一制造流程中的组成部分再次使用，因此需要进行回收处理。"
+50,Circularity and resource efficiency,Recycled and renewable content,cobalt_recycled_content_share,Cobalt recycled content share,钴回收材料占比,INTEGER,%,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",false,STATIC,GENERIC,GENERIC,"Annex XIII (1e); Art. 8(1), Art. 3, 1(51), Recycled content DA (draft)","The share of cobalt recycled from battery manufacturing waste or post-consumer waste in the active materials of the battery
+电池活性材料中来自电池制造废弃物或消费后废弃物回收的钴含量占比",16,"电池护照必须包含再生材料含量（Recycled Content）信息。
+再生材料含量信息应包括：活性材料中钴的再生含量占比，其中该部分钴来源于电池生产废弃物（Battery Manufacturing Waste）或消费后废弃物（Post-consumer Waste）的回收，并应按照每个电池型号、每个日历年度以及每个制造工厂分别进行申报。
+“电池生产废弃物” 是指：
+在电池制造过程中被剔除的材料或物品，这些材料或物品无法作为同一生产工艺中的组成部分再次使用，因此需要进行回收处理。"
+51,Circularity and resource efficiency,Recycled and renewable content,lithium_recycled_content_share,Lithium recycled content share,锂回收材料占比,INTEGER,%,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",false,STATIC,GENERIC,GENERIC,"Annex XIII (1e); Art. 8(1), Art. 3, 1(51), Recycled content DA (draft)","The share of lithium recycled from battery manufacturing waste or post-consumer waste in the active materials of the battery
+电池活性材料中来自电池制造废弃物或消费后废弃物回收的锂含量占比",12,"电池护照必须包含再生材料含量信息。
+再生材料含量信息应包括：活性材料中锂的再生含量占比，其中该部分锂来源于电池生产废弃物或消费后废弃物的回收，并应按照每个电池型号、每个日历年度以及每个制造工厂分别进行申报。
+“电池生产废弃物” 是指：
+在电池制造过程中被剔除的材料或物品，这些材料或物品无法作为同一生产工艺中的组成部分再次使用，因此需要进行回收处理。"
+52,Circularity and resource efficiency,Recycled and renewable content,lead_recycled_content_share,Lead recycled content share,铅回收材料占比,INTEGER,%,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",false,STATIC,GENERIC,GENERIC,"Annex XIII (1e); Art. 8(1), Recycled content DA (draft)","The share of recycled lead in the active materials of the battery
+电池活性材料中的再生铅含量占比",0,"电池护照必须包含再生材料含量信息。
+再生材料含量信息应包括：电池活性材料中再生铅的含量占比，并应按照每个电池型号、每个日历年度以及每个制造工厂分别进行申报。
+法规对于铅的再生含量占比不区分生产前废弃物（Pre-consumer Waste）和消费后废弃物（Post-consumer Waste）来源。"
+53,Circularity and resource efficiency,Recycled and renewable content,renewable_content_share,Renewable content share,可再生资源占比,INTEGER,%,PUBLIC,"Battery model per calendar year and per manufacturing site, i.e. batch level",true,STATIC,GENERIC,GENERIC,Annex XIII (1f),"Share of renewable content in the battery
+电池中可再生材料含量占比",35,电池护照（Battery Passport）必须包含有关可再生成分占比（Share of Renewable Content）的信息。
+54,Circularity and resource efficiency,"Information on role of end-users in waste prevention and information on battery collection, preparation for second life and on treatment at end of life",information_on_the_role_of_end_users_in_contributing_to_waste_prevention,Information on the role of end-users in contributing to waste prevention,终端用户在减少废弃物产生方面的作用说明,URI,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Art. 74(1a),"Information on how end-users can contribute to waste prevention
+终端用户如何促进废弃物预防的信息",https://example.com/end-users/waste-prevention,"电池护照（Battery Passport）必须包含有关最终用户在促进废弃物预防方面所发挥作用的信息。
+相关信息应包括旨在延长电池使用阶段的良好实践和建议，以及关于以下活动可能性的说明：
+再使用（Re-use）
+再使用准备（Preparation for Re-use）
+改作他用准备（Preparation for Repurposing）
+改作他用（Repurposing）
+再制造（Remanufacturing）
+注：
+此类信息可能因欧盟成员国而异，并可根据各成员国的具体要求分别提供。"
+55,Circularity and resource efficiency,"Information on role of end-users in waste prevention and information on battery collection, preparation for second life and on treatment at end of life",information_on_the_role_of_end_users_in_contributing_to_the_separate_collection_of_waste_batteries,Information on the role of end-users in contributing to the separate collection of waste batteries,终端用户参与废旧电池分类回收的相关说明,URI,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Art. 74(1b); Art. 64(1); Art. 64(2),"Information on how end-users can contribute to the separate collection of waste batteries
+终端用户如何促进废旧电池分类收集的信息",https://example.com/end-users/separate-collection,"电池护照必须包含有关终端用户在促进废旧电池分类收集方面作用的信息。
+终端用户有义务将废旧电池与其他废弃物流分开处置，包括不得将其与混合生活垃圾（Mixed Municipal Waste）一同丢弃，而应投放至由生产者（Producer）或生产者责任组织（Producer Responsibility Organisation）设立，或根据其安排设立的指定分类收集点（Separate Collection Points）。
+注：
+此类信息可能因欧盟成员国而有所不同，因此可根据相应成员国的具体要求和安排提供"
+56,Circularity and resource efficiency,"Information on role of end-users in waste prevention and information on battery collection, preparation for second life and on treatment at end of life",information_on_battery_collection_preparation_for_second_life_and_on_treatment_at_end_of_life,"Information on battery collection, preparation for second life and on treatment at end of life",电池收集、梯次利用准备及报废处理信息,URI,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Art. 74(1c),"Information on the collection of waste batteries, their preparation for second life and definitive treatment at end of life
+关于废旧电池收集、梯次利用准备以及寿命终止后最终处理的信息",https://example.com/end-users/second-life,"电池护照必须包含有关废旧电池分类收集、回收返还（Take-back）、收集点，以及再利用准备（Preparation for Re-use）、梯次利用准备（Preparation for Repurposing）和废旧电池处理（Treatment）相关信息。
+注：
+此类信息可能因欧盟成员国而有所不同，因此可根据相应成员国的具体要求和安排提供"
+57,Performance and durability,"Capacity, energy, and voltage",rated_capacity,Rated capacity,额定容量,INTEGER,Ah  or mAh (for LMT),PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,"Annex IV Part A (1); Annex XIII (1g); Labelling IA (draft) Annex II Part A (VI) and Part C (C, 1)","The total number of ampere-hours that can be withdrawn from a fully charged battery under reference conditions
+在参考条件下，从完全充电状态的电池中可释放的总安时数（Ah）",190,"电池护照必须包含额定容量（Rated Capacity）信息。
+轻型交通工具电池（LMT Batteries）的额定容量应按照可靠、准确且可重复的方法进行测定。该方法应考虑公认的先进技术水平（State of the Art），并确保测量结果具有较低的不确定性（Low Uncertainty），包括欧盟官方公报（OJEU）已发布引用标准中规定的相关测试方法。
+注：
+对于轻型交通工具电池（LMT Batteries），额定容量属于电池标签必须标示的信息之一。"
+58,Performance and durability,"Capacity, energy, and voltage",remaining_capacity,Remaining capacity,剩余容量,INTEGER,Ah,RESTRICTED,Individual battery,true,DYNAMIC,GENERIC,GENERIC,Annex VII Part A (1),"The corresponding in-use data attribute to rated capacity
+与额定容量对应的在用数据属性",188,"电池护照必须包含额定容量（Rated Capacity）信息。
+轻型交通工具电池（LMT Batteries）的额定容量应按照可靠、准确且可重复的方法进行测定，该方法应考虑公认的先进技术水平，并确保测量结果具有较低的不确定性。这包括采用欧盟官方公报（OJEU）已公布引用的相关标准中规定的测试方法。
+注：
+对于轻型交通工具电池（LMT Batteries），额定容量属于电池标签必须标注的信息之一。"
+59,Performance and durability,"Capacity, energy, and voltage",capacity_fade,Capacity fade,容量衰减,INTEGER,%,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,Annex IV Part A (1); Annex IV (2),"The decrease over time and upon usage in the amount of charge that a battery can deliver at the rated voltage, with respect to the original rated capacity as declared by the manufacturer
+相对于制造商声明的初始额定容量，电池在额定电压下可提供电荷量随时间和使用而产生的下降程度",1,"电池护照必须包含容量衰减（Capacity Fade）信息。
+当电池状态（Battery Status）发生变化时，容量衰减信息必须进行更新。"
+60,Performance and durability,"Capacity, energy, and voltage",certified_usable_battery_energy,Certified usable battery energy,经认证的可用电池能量,DECIMAL,kWh,PUBLIC,Battery model,false,STATIC,GENERIC,GENERIC,n.a.,"The usable battery energy according to the procedure in the UN GTR No 22 as determined during the certification of the vehicle
+按照《联合国全球技术法规第22号》（UN GTR No.22）规定的方法，在车辆认证过程中确定的可用电池能量",72.5,按照《联合国全球技术法规第22号》（UN GTR No.22）规定的方法，在车辆认证过程中确定的可用电池能量
+61,Performance and durability,"Capacity, energy, and voltage",remaining_usable_battery_energy,Remaining usable battery energy,剩余可用电池能量,DECIMAL,kWh,RESTRICTED,Individual battery,false,DYNAMIC,GENERIC,GENERIC,n.a.,"The usable battery energy at the present point in the lifetime of a battery as determined according to the procedure in the UN GTR No 22
+依据 UN GTR No.22 规定的方法，在当前寿命阶段测定的可用电池能量",72.1,依据 UN GTR No.22 规定的方法，在当前寿命阶段测定的可用电池能量
+62,Performance and durability,"Capacity, energy, and voltage",state_of_certified_energy_soce,State of certified energy (SOCE),认证能量状态（SOCE）,INTEGER,%,RESTRICTED,Individual battery,false,DYNAMIC,GENERIC,GENERIC,Annex VII Part A (EV),"The measured or on-board usable battery energy performance at a specific point in its lifetime, expressed as a percentage of the certified usable battery energy.
+在电池生命周期某一特定时点测得或由车载系统确定的可用电池能量表现，以认证可用电池能量的百分比表示",99,"电池护照（Battery Passport）必须包含关于单个电池健康状态（State of Health, SOH）的信息，即根据《电池法规》（Battery Regulation）第 14 条要求提供的电池健康状态证书（State of Certified Energy, SOCE）相关信息。
+该信息应针对**单个电池（Individual Battery）**进行提供。"
+63,Performance and durability,"Capacity, energy, and voltage",state_of_charge_soc,State of Charge (SoC),荷电状态,INTEGER,%,RESTRICTED,Individual battery,true,DYNAMIC,GENERIC,GENERIC,Annex XIII (4d); Article 3 1(27); Standardization request M/579,"The available energy or charge in a battery expressed as a percentage of rated capacity as declared by the manufacturer. When the battery’s state of health is no longer equal to its initial condition, SoC refers to the maximum energy or charge that can be stored in the battery at the time of charging.
+电池中可用能量或电荷量，以制造商声明的额定容量百分比表示。
+
+当电池健康状态（SOH）不再处于初始状态时，SOC 指电池在充电时能够储存的最大能量或电荷量对应的百分比",72,"电池护照应包含电池荷电状态（State of Charge, SoC）信息。"
+64,Performance and durability,"Capacity, energy, and voltage",minimum_voltage,Minimum voltage,最低电压,DECIMAL,V,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1h),"The lower voltage limit that the safe operation of the battery is rated for
+电池安全运行所规定的最低电压限值",300,电池护照必须包含最低电压（Minimal Voltage）信息；如适用，还应提供对应的温度范围信息。
+65,Performance and durability,"Capacity, energy, and voltage",maximum_voltage,Maximum voltage,最高电压,DECIMAL,V,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1h),"The upper voltage limit that the safe operation of the battery is rated for
+电池安全运行所规定的最高电压限值",420,电池护照必须包含最高电压（Maximum Voltage）信息；如适用，还应提供对应的温度范围信息。
+66,Performance and durability,"Capacity, energy, and voltage",performance_nominal_voltage,Nominal voltage,标称电压,DECIMAL,V,PUBLIC,Battery model,true,STATIC,NATIVE,NATIVE,Annex XIII (1h),"The suitable approximate value of the voltage used to designate or identify the battery
+用于标识或定义电池的电压近似值",384,"电池护照必须包含标称电压（Nominal Voltage）信息；如适用，还应提供对应的温度范围信息。
+或者更符合技术文件表述：
+电池护照应提供电池的标称电压值，并在相关情况下说明该电压值适用的温度范围。"
+67,Performance and durability,Power capability,original_power_capability,Original power capability,初始功率能力,DECIMAL,W,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,"Annex XIII (1i); Art. 10, Annex IV Part B (4) → measurement at 80 % SoC and 20% SoC required; Annex IV (3)","The amount of energy that a battery is capable to provide over a given period of time under reference conditions
+电池在参考条件下于规定时间内能够提供的功率能力",150000,电池护照必须包含初始功率能力（Original Power Capability）信息；如适用，还应提供相应的温度范围信息。
+68,Performance and durability,Power capability,remaining_power_capability,Remaining power capability,剩余功率能力,DECIMAL,W,RESTRICTED,Individual battery,true,DYNAMIC,GENERIC,GENERIC,"Art. 10: Annex IV (3) (only definition of power); Annex VII Part A (2) ""where possible, remaining power capability""; Annex IV Part B (4) --> measurement at 80 % SoC and 20% SoC required","The amount of energy that a battery is capable to provide over a given period of time under reference conditions at a distinct point in time during its usage
+电池在使用过程中某一特定时点、在参考条件下于规定时间内能够提供的功率能力",148000,"在可行情况下，电池护照必须包含作为电池健康状态（State of Health, SOH）信息的剩余功率能力（Remaining Power Capability）。
+功率能力应在参考条件（Reference Conditions）下进行测量，其中除其他要求外，必须包括在 80% SoC（荷电状态） 和 20% SoC（荷电状态） 条件下的测量。"
+69,Performance and durability,Power capability,power_fade,Power fade,功率衰减,INTEGER,%,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,"Annex IV P(4) (""power fade"" definition); Annex IV Part A (2) (power fade in %)
+Annex IV Part B (4) → measurement at 80 % SoC required;","The decrease over time and upon usage in the amount of power that a battery can deliver at the rated voltage
+电池在额定电压下可输出功率随时间和使用而产生的下降程度",1,"电池护照必须包含功率衰减（Power Fade）信息。
+该信息应在电池投放市场时提供，并在电池状态发生变化时进行更新。"
+70,Performance and durability,Power capability,maximum_permitted_battery_power,Maximum permitted battery power,电池允许最大功率,DECIMAL,W,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1i) (power limits),"The value of maximum permitted power the battery is rated for and reflects the data relevant for power limits
+电池所规定的最大允许功率值，用于反映与功率限制相关的数据",160000,电池护照必须包含有关初始功率能力（Original Power Capability）和功率限制（Power Limits）的信息；如适用，还应提供对应的温度范围信息。
+71,Performance and durability,Round trip energy efficiency and self-discharge,initial_round_trip_energy_efficiency,Initial round trip energy efficiency,初始往返能量效率,INTEGER,%,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1n); Art. 10: Annex IV (6); Annex IV Part A (4),"The ratio of the net energy delivered by a battery during a discharge test to the total energy required to restore the initial state of charge by a standard charge (see BattReg Annex IV (6))
+电池在放电测试期间输出的净能量与通过标准充电恢复至初始荷电状态所需总能量之间的比值（见《电池法规》附件 IV 第 6 项）",95,电池护照必须包含初始往返能量效率（Initial Round Trip Energy Efficiency）信息。
+72,Performance and durability,Round trip energy efficiency and self-discharge,round_trip_energy_efficiency_at_50_of_cycle_life,Round trip energy efficiency at 50% of cycle life,循环寿命达到 50% 时的往返能量效率,INTEGER,%,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII 1(n); Annex IV (6),"The ratio of the net energy delivered by a battery during a discharge test to the total energy required to restore the initial state of charge by a standard charge (see BattReg Annex IV (6))
+电池在放电测试期间输出的净能量与通过标准充电恢复至初始荷电状态所需总能量之间的比值（见《电池法规》附件 IV 第 6 项）",93,电池护照应提供电池在达到设计循环寿命 50% 时的往返能量效率数据。
+73,Performance and durability,Round trip energy efficiency and self-discharge,remaining_round_trip_energy_efficiency,Remaining round trip energy efficiency,剩余往返能量效率,INTEGER,%,RESTRICTED,Individual battery,false,DYNAMIC,GENERIC,GENERIC,Art. 10: Annex IV Part A (4); Article 14: Annex VII Part A (3); Annex IV (6),"The in-use analogy to the initial roundtrip energy the ratio of the net energy delivered by a battery during a discharge test to the total energy required to restore the initial state of charge by a standard charge
+初始往返能量效率在使用过程中的对应指标，即电池在放电测试期间输出的净能量与通过标准充电恢复至初始荷电状态所需总能量之间的比值",94,在可行情况下，电池护照必须包含剩余往返能量效率（Remaining Round-Trip Energy Efficiency）信息，作为反映电池健康状态（State of Health，SOH）的指标之一。
+74,Performance and durability,Round trip energy efficiency and self-discharge,energy_round_trip_efficiency_fade,Energy round trip efficiency fade,往返能量效率衰减,INTEGER,%,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,Annex IV Part A (4),"The decrease of round trip energy efficiency as percentage
+往返能量效率下降百分比",1,"在适用情况下，电池护照必须包含往返能量效率衰减（Energy Round-Trip Efficiency Fade）信息。
+往返能量效率衰减信息应在电池投放市场时提供，并在电池状态发生变化时进行更新。"
+75,Performance and durability,Round trip energy efficiency and self-discharge,initial_self_discharge_rate,Initial self-discharge rate,初始自放电率,DECIMAL,%/month,PUBLIC,Battery model,false,STATIC,GENERIC,GENERIC,n.a.,"The self-discharge-rate in an idle state of the battery in reference conditions (temperature etc.) at begin of life
+电池在寿命初期（BOL）且处于参考条件（如温度等）下静置状态时的自放电率",1.5,电池在寿命初期（BOL）且处于参考条件（如温度等）下静置状态时的自放电率
+76,Performance and durability,Round trip energy efficiency and self-discharge,current_self_discharge_rate,Current self-discharge rate,当前自放电率,DECIMAL,%/month,RESTRICTED,Individual battery,false,DYNAMIC,GENERIC,GENERIC,n.a.,"The change of the self-discharge rate in an idle state of the battery in reference conditions (temperature etc.) at aging parameter x, e.g. after a certain amount of storage time or, number of cycles
+电池在参考条件（如温度等）下静置时，自放电率在老化参数 x 条件下的变化情况，例如经过一定存储时间或一定循环次数之后",1.8,电池在参考条件（如温度等）下静置时，自放电率在老化参数 x 条件下的变化情况，例如经过一定存储时间或一定循环次数之后
+77,Performance and durability,Round trip energy efficiency and self-discharge,evolution_of_self_discharge_rates,Evolution of self-discharge rates,自放电率变化情况,INTEGER,%,RESTRICTED,Individual battery,false,DYNAMIC,GENERIC,GENERIC,Art. 14: Annex VII Part A (4),"The change of self-discharge over time and usage, as percentage calculated from the initial and current self-discharge rate.
+根据初始自放电率与当前自放电率计算得到的、自放电率随时间和使用变化的百分比",0.3,"在可行情况下，电池护照必须包含固定式电池储能系统（Stationary BESS）和轻型交通工具电池（LMT Batteries）的自放电率变化情况（Evolution of Self-discharge Rates）信息。
+其中，“在可行情况下（Where Possible）”的表述依据欧盟委员会发布的指导文件（European Commission Guidance）以及《电池法规》修订草案中的相关内容确定。"
+78,Performance and durability,Internal resistance,initial_internal_resistance_of_battery_cell_and_pack_module_recommended,Initial internal resistance of battery cell and pack (module recommended),电芯和电池包的初始内阻（建议模组）,INTEGER,Ohm,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1o); Art. 10: Annex IV Part A (3) (+definition of internal resistance),"""Quotient of change of voltage of a battery by the corresponding change in discharge current under specified conditions” (IEV 482 03 36)
+“在规定条件下，电池电压变化量与对应放电电流变化量之比。”（IEV 482-03-36）",45,"《电池法规》附件 IV 第（5）项规定：
+“内阻（Internal Resistance）” 是指在参考条件下，电芯或电池内部对电流流动的阻碍，即电子电阻（Electronic Resistance）与离子电阻（Ionic Resistance）之和，以及包括电感/电容特性在内对总有效电阻的贡献。
+该定义与上述 IEC Electropedia（国际电工词汇库）中的内阻定义有所不同。
+电池护照必须包含内阻（Internal Resistance）信息。
+电池护照必须同时提供电芯层级（Cell Level）和电池包层级（Pack Level）的内阻信息。"
+79,Performance and durability,Internal resistance,internal_resistance_increase_of_pack_cell_and_module_recommended,Internal resistance increase of pack (cell and module recommended),电池包内阻增量（建议电芯和模组）,INTEGER,%,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,"Annex IV, Part A(3)","The increase over time and upon usage of internal resistance
+内阻随时间和使用过程增加的程度",3,"电池护照必须包含内阻增幅（Internal Resistance Increase）信息。
+当电池状态（Battery Status）发生变化时，内阻增幅信息必须进行更新。
+电池状态变化通常伴随电池重新投放市场（Placement on the Market），相关要求见 6.1.3.7“电池状态（Battery Status）”。"
+80,Performance and durability,Internal resistance,present_internal_resistance_of_pack,Present internal resistance of pack,当前电池包内阻,INTEGER,Ohm,RESTRICTED,Individual battery,false,DYNAMIC,GENERIC,GENERIC,"Annex VII, Part A (5)","Quotient of change of voltage of a battery by the corresponding change in discharge current under specified conditions” (IEV 482 03 36)
+“在规定条件下，电池电压变化量与对应放电电流变化量之比。”（IEV 482-03-36）",46,在可行情况下，电池护照必须包含当前欧姆内阻（Current Ohmic Resistance）信息。
+81,Performance and durability,Battery lifetime,expected_lifetime_in_calendar_years,Expected lifetime in calendar years,预期日历寿命（年）,DECIMAL,years,RESTRICTED,Battery model,true,STATIC,GENERIC,GENERIC,"Annex IV, Part A(5); Annex XIII (1); Annex XIII (4a)","Expected life-time under the reference conditions for which they have been designed in terms of cycles, except for non-cycle applications, and calendar years
+在设计参考条件下，以循环次数（非循环应用除外）和日历年表示的预期寿命。",10,"电池护照（Battery Passport）必须包含有关电池预期寿命（以日历年计）的信息。
+更新要求为：
+电池投放市场时（Placement on the Market）应提供该信息；
+当电池状态（Battery Status）发生变化时，应对该信息进行更新。"
+82,Performance and durability,Battery lifetime,expected_lifetime_number_of_charge_discharge_cycles,Expected lifetime - Number of charge-discharge cycles,预期寿命（充放电循环次数）,INTEGER,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,"Annex IV, Part A(5); Annex XIII (1); Annex XIII (4a)","Expected life-time under the reference conditions for which they have been designed in terms of cycles, except for non-cycle applications, and calendar years
+在设计参考条件下，以循环次数（非循环应用除外）和日历年表示的预期寿命。",1500,"电池护照必须包含以循环次数表示的预期电池寿命（Expected Battery Lifetime Expressed in Cycles）以及所采用的参考测试（Reference Test）信息，但非循环应用（Non-cycle Applications）除外。
+参考测试应基于电池设计时所规定的参考条件（Reference Conditions）进行。"
+83,Performance and durability,Battery lifetime,number_of_full_charging_and_discharging_cycles,Number of full charging and discharging cycles,完整充放电循环次数,INTEGER,,RESTRICTED,Individual battery,true,DYNAMIC,GENERIC,GENERIC,Annex XIII (4d); Art. 14: Annex VII Part B (5),"In-use number of (full) charging and discharging cycles
+使用过程中记录的（完整）充放电循环次数",120,电池护照必须包含完整充放电循环次数（Full Number of Charging and Discharging Cycles）信息。
+84,Performance and durability,Battery lifetime,cycle_life_reference_test,Cycle-life reference test,循环寿命参考测试,STRING,,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1j),"The reference test for “Expected lifetime: Number of charge-discharge cycles”
+“预期寿命：充放电循环次数”的参考测试方法",IEC 62660-1,电池护照必须包含以循环次数表示的预期电池寿命，以及用于确定该寿命的参考测试信息。
+85,Performance and durability,Battery lifetime,c_rate_of_relevant_cycle_life_test,C-rate of relevant cycle-life test,相关循环寿命测试的倍率（C倍率）,DECIMAL,A/Ah,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1p),"Measurement parameter for “Expected lifetime: Number of charge-discharge cycles”: Applied charge and discharge rate in terms of rated capacity (C-rate) of relevant cycle-life reference test
+“预期寿命：充放电循环次数”的测量参数，即相关循环寿命参考测试中采用的充放电倍率（以额定容量 C-rate 表示）",0.33,"电池护照必须包含相关循环寿命测试的 C 倍率（C-rate）信息。
+除非属于非循环应用，否则应记录电池在其设计参考条件下的预期寿命（以充放电循环次数表示）。"
+86,Performance and durability,Battery lifetime,capacity_threshold_for_exhaustion,Capacity threshold for exhaustion,寿命终止容量阈值,INTEGER,%,PUBLIC,Battery model,false,STATIC,GENERIC,GENERIC,Annex XIII (1k),"The percentage of SOCE, above which the battery is still considered operational as EV battery in its current life, as provided by the economic operator
+由经济运营者规定的 SOCE 百分比阈值，高于该阈值时，电池在其当前生命周期内仍被视为可作为电动汽车（EV）电池继续使用",80,电池护照必须包含寿命终止容量阈值（Capacity Threshold for Exhaustion）信息。
+87,Performance and durability,Temperature conditions,temperature_information,Temperature information,温度信息,INTEGER,°C,RESTRICTED,Individual battery,true,DYNAMIC,GENERIC,GENERIC,Annex XIII (4d),"Temperature information regarding operating environmental conditions 
+运行环境条件相关的温度信息",25,电池护照必须包含定期记录的运行环境条件信息，包括温度信息。
+88,Performance and durability,Temperature conditions,temperature_range_idle_state_lower_boundary,"Temperature range idle state, lower boundary",静置状态温度范围下限,INTEGER,°C,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1l),"The lower boundary of the surrounding temperature range
+环境温度范围下限",-20,电池护照必须包含电池在非使用（静置）状态下可承受的温度范围信息，并提供相应的参考测试。
+89,Performance and durability,Temperature conditions,temperature_range_idle_state_upper_boundary,"Temperature range idle state, upper boundary",静置状态温度范围上限,INTEGER,°C,PUBLIC,Battery model,true,STATIC,GENERIC,GENERIC,Annex XIII (1l),"The upper boundary of the surrounding temperature range
+环境温度范围上限",55,电池护照必须包含电池在非使用（静置）状态下可承受的温度范围信息，并提供相应的参考测试。
+90,Performance and durability,Negative events,number_of_deep_discharge_events,Number of deep discharge events,深度放电事件次数,INTEGER,,RESTRICTED,Individual battery,false,DYNAMIC,GENERIC,GENERIC,Annex VII Part B (4),"The number of occasions, in which voltage has dropped below the lower operational limit as provided in the battery passport 
+电压低于电池护照规定的最低运行电压限制的次数",0,对于配备电池管理系统（BMS）的固定式储能系统（BESS）和轻型交通工具电池（LMT），电池护照必须包含有害事件追踪信息，例如深度放电事件次数。
+91,Performance and durability,Negative events,number_of_overcharge_events,Number of overcharge events,过充事件次数,INTEGER,,RESTRICTED,Individual battery,false,DYNAMIC,GENERIC,GENERIC,n.a.,"The number of occasions, in which voltage has increased above the upper operational limit as provided in the battery passport 
+电压超过电池护照规定的最高运行电压限制的次数",0,电压超过电池护照规定的最高运行电压限制的次数
+92,Performance and durability,Negative events,information_on_accidents,Information on accidents,事故信息,URI,,RESTRICTED,Individual battery,true,DYNAMIC,GENERIC,GENERIC,Annex XIII (4d),"Information on accidents affecting the battery, including when incorporated in equipment it is powering.
+影响电池的事故信息，包括电池安装于其所供电设备中时发生的事故",https://example.com/incidents/none,电池护照必须包含电池使用过程中产生的信息和数据，例如事故信息。

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="电池护照结构化数据层开发方案"><title>L3 结构化数据层｜电池护照</title><style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#183143;background:#f3f7f9;line-height:1.65;--brand:#087f8c;--line:#dce7ec;--muted:#63798a}*{box-sizing:border-box}body{margin:0}.hero{padding:38px max(20px,calc((100vw - 1080px)/2));color:white;background:linear-gradient(120deg,#15394a,#087f8c 75%,#17a08f)}h1{font-size:clamp(27px,4vw,40px);line-height:1.2;margin:10px 0}.hero p{max-width:800px;color:#e2f3f1}.chip{display:inline-block;border:1px solid #ffffff50;border-radius:99px;padding:3px 9px;margin:3px;font-size:12px}.wrap{max-width:1080px;margin:24px auto 60px;padding:0 18px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin:14px 0;box-shadow:0 10px 30px #1831430c}h2{font-size:21px;margin:0 0 14px}h3{font-size:16px;margin:18px 0 8px}.call{background:#e9f6f5;border-left:4px solid var(--brand);padding:12px 15px;margin:12px 0;border-radius:0 8px 8px 0}.warn{background:#fff5e7;border-color:#dba043}.table{overflow:auto;border:1px solid var(--line);border-radius:9px;margin:12px 0}table{width:100%;border-collapse:collapse;min-width:670px;font-size:13px}td,th{text-align:left;vertical-align:top;padding:9px 11px;border-bottom:1px solid var(--line)}th{background:#f2f7f9}tr:last-child td{border:0}pre{overflow:auto;background:#172b3a;color:#e6f1f2;padding:14px;border-radius:9px;font-size:12px;line-height:1.55}code{font-family:ui-monospace,monospace}.muted{color:var(--muted);font-size:13px}a{color:#075a66}@media(max-width:680px){.panel{padding:18px}}@media print{body{background:white}.hero{padding:22px;print-color-adjust:exact}.panel{box-shadow:none;break-inside:avoid}}
+</style></head><body><header class="hero"><div>L3 · CANONICAL DATA MODEL</div><h1>结构化数据层技术方案</h1><p>将导入候选数据持久化为有租户边界、可追溯、可版本管理的电池主数据和生命周期记录，提供给治理/护照层使用。</p><span class="chip">Draft 0.1</span><span class="chip">Java 17 · MySQL 8</span><span class="chip">schema dpp-schema/1.0</span></header><main class="wrap">
+<section class="panel"><h2>1. 职责和数据边界</h2><p>L3 是平台规范化业务数据的权威存储层，管理电池型号、修订、批次、单体、设备绑定、生命周期事件和证据引用。L1 定义字段语义；L2 交付 canonical 候选数据；L4 拥有字段字典、法规规则和审核结论；L5 读取已审核快照构建护照。</p><div class="call"><b>不做：</b>不自行推导法规合规结论、不定义公开字段分类、不直接构建护照 JSON、不将 Tuya device_id 作为电池身份、不物理删除已引用/已发布记录。</div><p>工程模块：<code>passport-domain</code>（模块化单体），包 <code>com.tuya.passport.data</code>；DB schema 同库按模块拥有表，Flyway migration 按模块前缀编号；统一使用 MySQL 8、MyBatis-Plus、UUID CHAR(36)。</p><p><a href="L2-数据接入与导入层技术方案.html">L2</a> · <a href="L4-数据治理与合规层技术方案.html">L4</a> · <a href="L5-护照服务层技术方案.html">L5</a> · <a href="欧盟电池护照分层技术架构.html">架构索引</a></p></section>
+<section class="panel"><h2>2. 领域对象与关系</h2><div class="table"><table><thead><tr><th>对象</th><th>主粒度</th><th>核心关系/规则</th></tr></thead><tbody><tr><td>BatteryModel</td><td>制造商命名空间下的产品型号</td><td>一个型号包含多个 Revision；型号基础资料不可覆盖历史修订。</td></tr><tr><td>ModelRevision</td><td>某版本的技术/合规声明</td><td>保存结构化属性 JSON、schemaVersion、状态、来源和生效区间。</td></tr><tr><td>ProductionBatch</td><td>批次</td><td>归属 ModelRevision，可关联证据及批次属性。</td></tr><tr><td>BatteryUnit</td><td>可识别的电池实体</td><td>由 issuer_code + normalized_sn 唯一；原始 SN 永久保留，不能复用。</td></tr><tr><td>DeviceBinding</td><td>电池与设备/系统关联时段</td><td>历史保留；同一电池同时最多一个 active binding（按业务定义设备层级）。</td></tr><tr><td>LifecycleEvent</td><td>某单体电池事件</td><td>追加写入；更正采用 supersedes_event_id，不原位修改。</td></tr><tr><td>EvidenceAssetRef</td><td>证据文件引用与元数据</td><td>文件实体由共享 OSS 能力管理，本表仅引用 asset_id/checksum/MIME/保留标签。</td></tr></tbody></table></div><p class="muted">一期核心属性采用固定列 + JSON 扩展列，避免尚未证明查询需求前建立通用 EAV。扩展字段须经 L4 字段字典登记，不允许任意键进入发布数据。</p></section>
+<section class="panel"><h2>3. 核心 DDL（MySQL 8）</h2><pre><code>CREATE TABLE bp_battery_model (
+ id CHAR(36) PRIMARY KEY, org_id CHAR(36) NOT NULL,
+ issuer_code VARCHAR(64) NOT NULL, model_code VARCHAR(64) NOT NULL,
+ manufacturer_name VARCHAR(200) NOT NULL, battery_category VARCHAR(24) NOT NULL,
+ created_at DATETIME(3) NOT NULL, updated_at DATETIME(3) NOT NULL,
+ version BIGINT NOT NULL DEFAULT 0, deleted_at DATETIME(3) NULL,
+ UNIQUE KEY uk_org_issuer_model (org_id,issuer_code,model_code),
+ KEY idx_org_category (org_id,battery_category)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE bp_model_revision (
+ id CHAR(36) PRIMARY KEY, org_id CHAR(36) NOT NULL,
+ model_id CHAR(36) NOT NULL, revision_code VARCHAR(64) NOT NULL,
+ schema_version VARCHAR(32) NOT NULL, rated_capacity_kwh DECIMAL(12,4),
+ rated_voltage_v DECIMAL(12,4), chemistry_code VARCHAR(40),
+ attribute_json JSON NOT NULL, source_ref VARCHAR(128) NOT NULL,
+ effective_from DATE NOT NULL, effective_to DATE NULL,
+ status VARCHAR(20) NOT NULL, created_at DATETIME(3) NOT NULL,
+ UNIQUE KEY uk_org_model_revision (org_id,model_id,revision_code),
+ KEY idx_org_status (org_id,status),
+ CONSTRAINT fk_revision_model FOREIGN KEY(model_id) REFERENCES bp_battery_model(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE bp_battery_unit (
+ id CHAR(36) PRIMARY KEY, org_id CHAR(36) NOT NULL,
+ issuer_code VARCHAR(64) NOT NULL, sn_raw VARCHAR(128) NOT NULL,
+ sn_normalized VARCHAR(128) NOT NULL, model_revision_id CHAR(36) NOT NULL,
+ batch_id CHAR(36) NULL, manufactured_at DATETIME(3) NULL,
+ source_system VARCHAR(64) NOT NULL, source_record_id VARCHAR(128) NOT NULL,
+ status VARCHAR(20) NOT NULL, created_at DATETIME(3) NOT NULL,
+ version BIGINT NOT NULL DEFAULT 0,
+ UNIQUE KEY uk_org_issuer_sn (org_id,issuer_code,sn_normalized),
+ UNIQUE KEY uk_source_record (org_id,source_system,source_record_id),
+ KEY idx_org_revision (org_id,model_revision_id),
+ CONSTRAINT fk_unit_revision FOREIGN KEY(model_revision_id) REFERENCES bp_model_revision(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE bp_device_binding (
+ id CHAR(36) PRIMARY KEY, org_id CHAR(36) NOT NULL,
+ battery_unit_id CHAR(36) NOT NULL, device_id VARCHAR(128) NOT NULL,
+ bound_at DATETIME(3) NOT NULL, unbound_at DATETIME(3) NULL,
+ change_reason VARCHAR(255), created_at DATETIME(3) NOT NULL,
+ KEY idx_org_unit_active (org_id,battery_unit_id,unbound_at),
+ KEY idx_org_device (org_id,device_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</code></pre><p class="muted">同样模式补齐 batch、lifecycle_event、evidence_ref、outbox。所有业务表均带 org_id；唯一索引均纳入 org_id。外键不能单独替代跨租户校验；repository 查询必须显式 org_id。Flyway migration 定义真实 DDL，不允许生产依赖自动建表。</p></section>
+<section class="panel"><h2>4. 写入 API / 事件</h2><div class="table"><table><thead><tr><th>接口</th><th>用途</th><th>权限</th></tr></thead><tbody><tr><td>POST /api/v1/models</td><td>创建电池型号与初始修订</td><td>data:write</td></tr><tr><td>POST /api/v1/models/{id}/revisions</td><td>新增不可覆盖的型号修订</td><td>data:write</td></tr><tr><td>POST /api/v1/battery-units:batchUpsert</td><td>按 source record 幂等登记单体</td><td>data:write</td></tr><tr><td>GET /api/v1/battery-units/{id}</td><td>租户内查询单体及当前关系</td><td>data:read</td></tr><tr><td>POST /api/v1/battery-units/{id}/bindings</td><td>创建绑定/更换关系</td><td>data:write</td></tr><tr><td>POST /api/v1/battery-units/{id}/events</td><td>追加生命周期事件</td><td>lifecycle:write</td></tr></tbody></table></div><p>写入使用 <code>Idempotency-Key</code>，响应返回记录 ID 和 <code>traceId</code>。冲突：同 SN 不同 model/source payload 返回 <code>DATA_IDENTITY_CONFLICT</code>；不得自动合并或覆盖。L3 事件：<code>bp.data.model-revision.v1</code>、<code>bp.data.unit-registered.v1</code>、<code>bp.data.lifecycle-event.v1</code>。Envelope 与 L2 一致。</p></section>
+<section class="panel"><h2>5. 事务、版本与并发</h2><ul><li>采用乐观锁 <code>version</code>；更新请求带 expectedVersion，不匹配返回 409 <code>DATA_VERSION_CONFLICT</code>。</li><li>型号修订、单体注册与 outbox event 在同一 MySQL 事务提交；MQ publisher 独立读取 outbox，成功后标记 published。</li><li>SN 规范化：trim + Unicode NFC；大小写规则按 issuer 配置；保留 sn_raw，禁止删除前导零/内部符号。唯一键由 org + issuer + normalized SN 构成。</li><li>更换绑定采用事务：结束旧 active binding，再新增一条；失败回滚。并发请求锁定 unit 行或通过唯一活跃约束策略保证仅一条。</li><li>单体、已发布修订及事件禁止硬删除；撤销用状态/软删除并产生审计。删除请求需评估法律保留义务。</li></ul></section>
+<section class="panel"><h2>6. 安全、租户和数据保留</h2><ul><li>JWT org_id 必须从认证上下文提取；服务层函数显式传入 orgId，Mapper 强制 org_id 条件。</li><li>跨租户对象查询统一返回 404；新增/绑定时验证所有关联对象属于同 org。</li><li>MyBatis-Plus TenantLineInnerInterceptor 作为防漏项；对原生 SQL、批量 SQL 与后台任务增加负向测试。</li><li>restricted/internal 属性与证据 metadata 不得由 L3 直接公开；由 L4 字典及 L5 投影控制。</li><li>审计字段：actor、org、source system、traceId、before/after hash、reason、occurredAt；操作审计写共享 append-only sink。</li><li>备份/恢复及归档策略按法律留存、业务 SLA 另行批准；个人数据尽量不进入电池主档。</li></ul></section>
+<section class="panel"><h2>7. 测试、验收与开发任务</h2><ol><li>同 org 下唯一 SN 生效；不同 org 可有同 SN；同 issuer 大小写规则符合配置。</li><li>跨租户读写、关联对象越权、原生 SQL 绕过租户拦截的负向测试均通过。</li><li>同 source record 重试幂等；同 SN 异 payload 冲突；并发绑定不会产生两个 active 关系。</li><li>revision 与 lifecycle event 只追加版本；乐观锁冲突返回 409；数据库恢复后 outbox 可补发。</li><li>执行 Flyway 空库迁移及上一版本升级；索引查询计划覆盖 org_id + SN/model。</li></ol><p><b>任务：</b>定义领域 DTO/映射 → 建 Flyway 表和 Mapper → 实现型号/修订 → 单体/SN 幂等 → 绑定与事件 → outbox/MQ → 权限和审计 → 集成与迁移测试。</p><p>邻接：<a href="L2-数据接入与导入层技术方案.html">L2</a> · <a href="L4-数据治理与合规层技术方案.html">L4</a> · <a href="L5-护照服务层技术方案.html">L5</a> · <a href="欧盟电池护照分层技术架构.html">架构索引</a></p></section>
+</main></body></html>

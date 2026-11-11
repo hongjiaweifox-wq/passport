@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="电池护照服务层开发方案"><title>L5 护照服务层｜电池护照</title><style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#183143;background:#f3f7f9;line-height:1.65;--brand:#087f8c;--line:#dce7ec;--muted:#63798a}*{box-sizing:border-box}body{margin:0}.hero{padding:38px max(20px,calc((100vw - 1080px)/2));color:white;background:linear-gradient(120deg,#15394a,#087f8c 75%,#17a08f)}h1{font-size:clamp(27px,4vw,40px);line-height:1.2;margin:10px 0}.hero p{max-width:800px;color:#e2f3f1}.chip{display:inline-block;border:1px solid #ffffff50;border-radius:99px;padding:3px 9px;margin:3px;font-size:12px}.wrap{max-width:1080px;margin:24px auto 60px;padding:0 18px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin:14px 0;box-shadow:0 10px 30px #1831430c}h2{font-size:21px;margin:0 0 14px}h3{font-size:16px;margin:18px 0 8px}.call{background:#e9f6f5;border-left:4px solid var(--brand);padding:12px 15px;margin:12px 0;border-radius:0 8px 8px 0}.warn{background:#fff5e7;border-color:#dba043}.table{overflow:auto;border:1px solid var(--line);border-radius:9px;margin:12px 0}table{width:100%;border-collapse:collapse;min-width:670px;font-size:13px}td,th{text-align:left;vertical-align:top;padding:9px 11px;border-bottom:1px solid var(--line)}th{background:#f2f7f9}tr:last-child td{border:0}pre{overflow:auto;background:#172b3a;color:#e6f1f2;padding:14px;border-radius:9px;font-size:12px;line-height:1.55}code{font-family:ui-monospace,monospace}.muted{color:var(--muted);font-size:13px}a{color:#075a66}@media(max-width:680px){.panel{padding:18px}}@media print{body{background:white}.hero{padding:22px;print-color-adjust:exact}.panel{box-shadow:none;break-inside:avoid}}
+</style></head><body><header class="hero"><div>L5 · PASSPORT LIFECYCLE & RESOLUTION</div><h1>护照服务层技术方案</h1><p>承接 L4 已审核的候选数据，建立电池护照、不可变版本、唯一身份解析、二维码访问与发布/暂停能力；所有公开投影由服务端按字段白名单生成。</p><span class="chip">Draft 0.1</span><span class="chip">Java 17 · Spring Boot 3</span><span class="chip">dpp-schema/1.0</span></header><main class="wrap">
+<section class="panel"><h2>1. 服务边界与核心对象</h2><p>L5 是护照状态和外部访问入口的 owner。来源：L3 电池标识/关系，L4 审核通过快照与 visibility metadata。输出：public resolver、受控 API、JSON 导出、护照状态事件供 L6/CDN 更新。</p><div class="call warn"><b>标识分离：</b><code>unique_identifier</code> 是法规意义上分配给电池的标识，可采用满足唯一稳定条件的 SN（带 issuer namespace）；<code>public_code</code> 是随机不可枚举的 URL 解析码。数据库内部 passport_id 不放在二维码。二维码只含稳定 HTTPS URL 和 public_code，不含护照字段值。</div><p>模块 <code>passport-service</code>；Spring 模块化单体，包 <code>com.tuya.passport.passport</code>。职责不包括法规规则 owner（L4）、前端渲染（L6）、来源数据采集（L2）。<br><a href="L4-数据治理与合规层技术方案.html">L4</a> · <a href="L6-应用与访问层技术方案.html">L6</a> · <a href="L3-结构化数据层技术方案.html">L3</a> · <a href="欧盟电池护照分层技术架构.html">架构索引</a></p></section>
+<section class="panel"><h2>2. 数据快照与发布状态机</h2><p>一个护照关联一个 unique_identifier 与电池实体；每次发布产生不可变 <code>passport_version</code>。版本由审核通过数据构建，按照 L4 visibility_class 生成 <code>public_json</code>、<code>restricted_json</code>、<code>regulator_json</code>，内部治理 metadata 不进入公共 payload。</p><p>状态：<code>DRAFT → PENDING_REVIEW → PUBLISHED → SUSPENDED | SUPERSEDED → ARCHIVED</code>。初次数据审核在 L4；L5 的 PENDING_REVIEW 表示发布命令待 L5 操作/确认，不重复实现另一套业务审核。已发布版本内容不可更新；更正创建新版本并原子切换 current_version。</p><ol><li>L4 发布候选有 validation/review 引用与 snapshot hash；L5 校验签名/权限、对象一致及 hash。</li><li>事务创建新版本、更新 current_version、写 outbox；版本 JSON 与 hash 同事务保存。</li><li>发布成功后清理 Redis/CDN 缓存，发布状态事件；失败可安全重试。</li><li>暂停时先数据库状态切为 SUSPENDED，再使缓存失效并使所有公开解析返回统一不可用状态；不得沿用旧缓存公开数据。</li></ol></section>
+<section class="panel"><h2>3. API 与二维码解析</h2><div class="table"><table><thead><tr><th>方法/路径</th><th>功能</th><th>访问</th></tr></thead><tbody><tr><td>GET /p/{publicCode}</td><td>公开解析页面数据（或 302 至稳定 H5 URL）</td><td>匿名，仅 public projection</td></tr><tr><td>GET /api/v1/public/passports/{publicCode}</td><td>公开 JSON，ETag / If-None-Match</td><td>匿名、限流</td></tr><tr><td>GET /api/v1/passports/{passportId}/restricted</td><td>受控字段查询</td><td>OIDC + passport:restricted:read</td></tr><tr><td>GET /api/v1/passports/{passportId}/export</td><td>机器可读 JSON 导出</td><td>组织/监管相应 scope</td></tr><tr><td>POST /api/v1/passports/{id}:publish</td><td>发布审核通过候选</td><td>passport:publish</td></tr><tr><td>POST /api/v1/passports/{id}:suspend</td><td>暂停公开访问并记录原因</td><td>passport:suspend</td></tr><tr><td>GET /api/v1/passports/{id}/versions</td><td>查询授权范围内的版本元数据</td><td>passport:history:read</td></tr></tbody></table></div><pre><code>GET /api/v1/public/passports/7Tmk... (opaque publicCode)
+200 OK
+ETag: "sha256:..."
+Cache-Control: public, max-age=60, s-maxage=300
+{
+ "schemaVersion":"dpp-schema/1.0",
+ "passportStatus":"PUBLISHED",
+ "passportVersion":3,
+ "updatedAt":"2026-11-10T08:30:00Z",
+ "data":{"manufacturerName":"Example Energy","batteryCategory":"INDUSTRIAL"}
+}</code></pre><p>不存在、被撤销、无权访问的公开标识统一返回外观一致的 404/410（按状态选定统一策略），不泄露内部 ID/SN/组织存在性。QR code 指向可迁移解析域名；域名迁移由 DNS/redirect 运维策略保证。</p></section>
+<section class="panel"><h2>4. 存储模型与缓存</h2><pre><code>CREATE TABLE bp_passport (
+ id CHAR(36) PRIMARY KEY, org_id CHAR(36) NOT NULL,
+ battery_unit_id CHAR(36) NOT NULL, unique_identifier VARCHAR(192) NOT NULL,
+ issuer_code VARCHAR(64) NOT NULL, public_code CHAR(32) NOT NULL,
+ status VARCHAR(20) NOT NULL, current_version INT NOT NULL DEFAULT 0,
+ created_at DATETIME(3) NOT NULL, updated_at DATETIME(3) NOT NULL,
+ UNIQUE KEY uk_org_identifier(org_id,issuer_code,unique_identifier),
+ UNIQUE KEY uk_public_code(public_code),
+ KEY idx_org_status(org_id,status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE bp_passport_version (
+ id CHAR(36) PRIMARY KEY, org_id CHAR(36) NOT NULL,
+ passport_id CHAR(36) NOT NULL, version_no INT NOT NULL,
+ schema_version VARCHAR(32) NOT NULL, source_snapshot_hash CHAR(64) NOT NULL,
+ public_json JSON NOT NULL, restricted_json JSON NOT NULL,
+ regulator_json JSON NOT NULL, public_hash CHAR(64) NOT NULL,
+ created_at DATETIME(3) NOT NULL, created_by CHAR(36) NOT NULL,
+ UNIQUE KEY uk_org_passport_version(org_id,passport_id,version_no),
+ KEY idx_org_created(org_id,created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</code></pre><p>public_code 使用 CSPRNG 生成至少 128-bit entropy 后 Base64URL/hex 编码（长度 32 hex chars）；碰撞由 UNIQUE 冲突后重试解决。禁止把 SN 编进 URL path。审核通过快照需在快照存储/审计系统可验证来源。</p><p><b>Redis：</b><code>dpp:public:{publicCode}:{version}</code> → public JSON + ETag；<code>dpp:status:{publicCode}</code> → status/currentVersion。暂停/发布操作写入失效事件，状态缓存短 TTL 并优先检查暂停状态。CDN purge 失败时重试；敏感 projection 禁止 public cache。</p></section>
+<section class="panel"><h2>5. 权限、审计与防滥用</h2><ul><li>公开访问无需登录，但匿名仅能得到 public_json allowlist。所有 projection 在 server side 从 L4 分类数据构建；不能让 L6 自行过滤整个 JSON。</li><li>受控访问采用 OIDC JWT scopes，组织隔离；监管授权含主体、目的、范围、到期时间、签发人和撤销机制。</li><li>public_code 不可预测；按 IP、ASN、组织/客户端限流并接 WAF/bot protection；无批量匿名 resolve API。</li><li>审计发布/暂停/恢复/版本更正/受控访问/批量导出。受控数据读取审计与操作审计区分；统一送 append-only audit sink。</li><li>不缓存受控响应；响应不含内部对象 ID、个人信息、source ref、evidence URL、错误堆栈。</li><li>公开页面安全 headers：HSTS、CSP、X-Content-Type-Options、frame-ancestors；CORS 仅允许明确源。</li></ul></section>
+<section class="panel"><h2>6. 错误处理与一致性</h2><ul><li>发布命令需 <code>Idempotency-Key</code>；同 snapshot hash 重放返回既有版本，hash 不同返回 409。</li><li>public_code 生成、护照创建和标识唯一冲突走数据库唯一约束；不可静默覆盖其他 passport。</li><li>发布 DB 事务与 outbox 原子提交；CDN purge、事件推送失败异步重试并告警。</li><li>缓存故障时读 DB/版本存储降级；数据库不可用时可返回短时已缓存公开数据（仅非暂停状态可保证）；状态缓存设计必须优先避免已暂停护照继续泄露。</li><li>暂停/撤回按强一致性路径处理；在 purge 确认前公开解析层短 TTL 并每次确认权威状态。</li></ul></section>
+<section class="panel"><h2>7. 测试、验收与任务</h2><ol><li>public/restricted/regulator/internal fixture 投影精确匹配 allowlist；异常消息、导出及 HTML hydration 中无受控字段。</li><li>随机 public_code 无顺序/预测关系；抽样暴力探测有速率限制；未知和无权对象不泄露存在性。</li><li>同一 unique_identifier 重复建护照冲突可定位；SN 仅作为 unique_identifier 时需有 issuer namespace uniqueness test。</li><li>发布版本不可变；同 snapshot 重试幂等；新版本切换原子；并发发布只有一个 current version。</li><li>暂停后数据库、Redis、CDN 路径均验证缓存清理/短 TTL，不能读取旧公开 JSON。</li><li>schema dpp-schema/1.0 导出校验；历史版本兼容反序列化。</li></ol><p><b>实现任务：</b>护照实体/DDL → 身份和 public code service → L4 candidate adapter → snapshot projector/hash → 发布状态和 outbox → public resolver/API → restricted authz/export → Redis/CDN invalidation → 安全与 E2E。</p><p>邻接：<a href="L4-数据治理与合规层技术方案.html">L4</a> · <a href="L6-应用与访问层技术方案.html">L6</a> · <a href="L3-结构化数据层技术方案.html">L3</a> · <a href="欧盟电池护照分层技术架构.html">架构索引</a></p></section>
+</main></body></html>

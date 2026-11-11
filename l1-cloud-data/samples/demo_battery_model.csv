@@ -1,0 +1,2 @@
+模板版本,来源系统,来源记录编号,组织编码,型号编码,修订版本,制造商名称,电池类别,化学体系,额定容量(kWh),额定电压(V),目标市场,生效日期
+dpp-schema/1.0,SUPPLIER-PLM,DEMO-MODEL-001,DEMO-ORG,DEMO-EV-2026,R01,Demo Battery GmbH,EV,LFP,72.5,384,EU,2026-01-01
